@@ -1,0 +1,69 @@
+{
+  "common": {
+    "appName": "لوحة التحكم",
+    "search": "بحث",
+    "actions": "إجراءات",
+    "add": "إضافة",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "confirm": "تأكيد",
+    "close": "إغلاق",
+    "loading": "جارٍ التحميل...",
+    "noData": "لا توجد بيانات",
+    "error": "حدث خطأ",
+    "retry": "إعادة المحاولة",
+    "all": "الكل",
+    "yes": "نعم",
+    "no": "لا",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "status": "الحالة",
+    "date": "التاريخ",
+    "name": "الاسم",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "view": "عرض",
+    "back": "رجوع"
+  },
+  "nav": {
+    "dashboard": "الرئيسية",
+    "books": "الكتب",
+    "authors": "المؤلفون",
+    "categories": "التصنيفات",
+    "users": "المستخدمون",
+    "audit": "سجل التدقيق",
+    "settings": "الإعدادات",
+    "reports": "التقارير",
+    "catalog": "المحتوى",
+    "administration": "الإدارة"
+  },
+  "table": {
+    "rowsPerPage": "صفوف لكل صفحة",
+    "of": "من",
+    "page": "صفحة",
+    "next": "التالي",
+    "previous": "السابق",
+    "selected": "محدد",
+    "columns": "الأعمدة",
+    "filter": "تصفية",
+    "clearFilters": "مسح التصفية",
+    "showing": "عرض {{from}}–{{to}} من {{total}}"
+  },
+  "theme": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "toggle": "تبديل السمة"
+  },
+  "language": {
+    "ar": "العربية",
+    "en": "English",
+    "toggle": "تغيير اللغة"
+  },
+  "user": {
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "account": "الحساب"
+  }
+}
