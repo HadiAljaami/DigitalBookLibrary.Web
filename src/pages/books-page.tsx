@@ -17,7 +17,7 @@ import { useServerTable } from "@/hooks/use-server-table";
 import { toast } from "@/lib/toast-store";
 import { catalogService } from "@/services/catalog-service";
 import { errorMessage } from "@/lib/error-message";
-import { formatNumber } from "@/lib/format";
+import { formatDate, formatNumber } from "@/lib/format";
 import { type BookListItem } from "@/types/catalog";
 
 export function BooksPage() {
@@ -81,12 +81,27 @@ export function BooksPage() {
     { accessorKey: "categoryName", header: t("nav.categories"), cell: ({ row }) => row.original.categoryName ?? "—" },
     { accessorKey: "language", header: t("books.language"), cell: ({ row }) => row.original.language ?? "—" },
     {
+      accessorKey: "publishDate",
+      header: t("books.publishDate"),
+      cell: ({ row }) => formatDate(row.original.publishDate),
+    },
+    {
       accessorKey: "downloadsCount",
       header: t("dashboard.downloads"),
       cell: ({ row }) => (
         <span className="inline-flex items-center gap-1 text-muted-foreground">
           <Download className="h-3.5 w-3.5" />
           {formatNumber(row.original.downloadsCount)}
+        </span>
+      ),
+    },
+    {
+      accessorKey: "readsCount",
+      header: t("dashboard.reads"),
+      cell: ({ row }) => (
+        <span className="inline-flex items-center gap-1 text-muted-foreground">
+          <Eye className="h-3.5 w-3.5" />
+          {formatNumber(row.original.readsCount)}
         </span>
       ),
     },

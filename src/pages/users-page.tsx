@@ -81,6 +81,11 @@ export function UsersPage() {
     { accessorKey: "username", header: t("common.name") },
     { accessorKey: "email", header: t("common.email") },
     {
+      accessorKey: "phone",
+      header: t("common.phone"),
+      cell: ({ row }) => row.original.phone ?? "—",
+    },
+    {
       accessorKey: "roles",
       header: t("common.role"),
       cell: ({ row }) => (
