@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useMatch } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
 import { type NavItem } from "@/config/navigation";
@@ -22,36 +22,50 @@ const activeRow = "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm";
 const idleRow = "text-sidebar-foreground/80 hover:bg-white/5 hover:text-sidebar-foreground";
 
 export function SidebarNavItem({ item, collapsed, onNavigate }: Props) {
-  const { t } = useTranslation();
-  const { pathname } = useLocation();
-  const label = t(`nav.${item.labelKey}`);
   const hasChildren = !!item.children?.length;
-  const childActive = item.children?.some((c) => pathname.startsWith(c.to)) ?? false;
 
-  // ---- Leaf link ----
   if (!hasChildren && item.to) {
-    const link = (
-      <NavLink
-        to={item.to}
-        end={item.to === "/"}
-        onClick={onNavigate}
-        className={({ isActive }) =>
-          cn(rowBase, collapsed ? rail : rowExpanded, isActive ? activeRow : idleRow)
-        }
-      >
-        <item.icon className="h-5 w-5 shrink-0" />
-        {!collapsed && <span>{label}</span>}
-      </NavLink>
-    );
-    return collapsed ? <IconTooltip label={label}>{link}</IconTooltip> : link;
+    return <LeafItem to={item.to} item={item} collapsed={collapsed} onNavigate={onNavigate} />;
   }
-
-  // ---- Parent with children ----
   return collapsed ? (
-    <CollapsedParent item={item} label={label} active={childActive} />
+    <CollapsedParent item={item} />
   ) : (
-    <ExpandedParent item={item} label={label} active={childActive} onNavigate={onNavigate} />
+    <ExpandedParent item={item} onNavigate={onNavigate} />
   );
+}
+
+/**
+ * A direct link. Active state is computed with `useMatch` and passed as a *string* className —
+ * NavLink's function-form className cannot survive Radix `asChild` (the tooltip trigger), which
+ * would stringify it.
+ */
+function LeafItem({
+  to,
+  item,
+  collapsed,
+  onNavigate,
+}: {
+  to: string;
+  item: NavItem;
+  collapsed: boolean;
+  onNavigate: () => void;
+}) {
+  const { t } = useTranslation();
+  const label = t(`nav.${item.labelKey}`);
+  const active = !!useMatch({ path: to, end: to === "/" });
+
+  const link = (
+    <NavLink
+      to={to}
+      onClick={onNavigate}
+      className={cn(rowBase, collapsed ? rail : rowExpanded, active ? activeRow : idleRow)}
+    >
+      <item.icon className="h-5 w-5 shrink-0" />
+      {!collapsed && <span>{label}</span>}
+    </NavLink>
+  );
+
+  return collapsed ? <IconTooltip label={label}>{link}</IconTooltip> : link;
 }
 
 /** Shows the label on hover when the rail is collapsed. */
@@ -66,16 +80,13 @@ function IconTooltip({ label, children }: { label: string; children: React.React
 }
 
 /** Collapsed parent: a plain icon that expands the rail and opens its group on click. */
-function CollapsedParent({
-  item,
-  label,
-  active,
-}: {
-  item: NavItem;
-  label: string;
-  active: boolean;
-}) {
+function CollapsedParent({ item }: { item: NavItem }) {
+  const { t } = useTranslation();
+  const { pathname } = useLocation();
   const { expandAndOpenGroup } = useSidebar();
+  const label = t(`nav.${item.labelKey}`);
+  const active = item.children!.some((c) => pathname.startsWith(c.to));
+
   const button = (
     <button
       type="button"
@@ -89,19 +100,12 @@ function CollapsedParent({
 }
 
 /** Expanded parent: an inline accordion. Opens automatically when one of its routes is active. */
-function ExpandedParent({
-  item,
-  label,
-  active,
-  onNavigate,
-}: {
-  item: NavItem;
-  label: string;
-  active: boolean;
-  onNavigate: () => void;
-}) {
+function ExpandedParent({ item, onNavigate }: { item: NavItem; onNavigate: () => void }) {
   const { t } = useTranslation();
+  const { pathname } = useLocation();
   const { isGroupOpen, toggleGroup, openGroup } = useSidebar();
+  const label = t(`nav.${item.labelKey}`);
+  const active = item.children!.some((c) => pathname.startsWith(c.to));
   const open = isGroupOpen(item.labelKey);
 
   // Keep the active group open (e.g. after navigating straight to a child route).
@@ -124,23 +128,27 @@ function ExpandedParent({
       {open && (
         <div className="mt-1 space-y-1 ps-4 animate-fade-in">
           {item.children!.map((child) => (
-            <NavLink
-              key={child.to}
-              to={child.to}
-              onClick={onNavigate}
-              className={({ isActive }) =>
-                cn(
-                  "relative flex items-center rounded-lg py-2 ps-6 pe-3 text-sm transition-colors",
-                  "before:absolute before:start-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-current before:opacity-40",
-                  isActive ? activeRow : idleRow,
-                )
-              }
-            >
-              {t(`nav.${child.labelKey}`)}
-            </NavLink>
+            <ChildLink key={child.to} to={child.to} label={t(`nav.${child.labelKey}`)} onNavigate={onNavigate} />
           ))}
         </div>
       )}
     </div>
+  );
+}
+
+function ChildLink({ to, label, onNavigate }: { to: string; label: string; onNavigate: () => void }) {
+  const active = !!useMatch({ path: to, end: false });
+  return (
+    <NavLink
+      to={to}
+      onClick={onNavigate}
+      className={cn(
+        "relative flex items-center rounded-lg py-2 ps-6 pe-3 text-sm transition-colors",
+        "before:absolute before:start-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-current before:opacity-40",
+        active ? activeRow : idleRow,
+      )}
+    >
+      {label}
+    </NavLink>
   );
 }
