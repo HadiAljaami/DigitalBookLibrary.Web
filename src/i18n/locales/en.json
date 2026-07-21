@@ -25,7 +25,39 @@
     "email": "Email",
     "role": "Role",
     "view": "View",
-    "back": "Back"
+    "back": "Back",
+    "saved": "Saved successfully",
+    "deleted": "Deleted successfully"
+  },
+  "users": {
+    "subtitle": "Manage user accounts and their roles",
+    "roles": "Roles",
+    "searchPlaceholder": "Search by name or email..."
+  },
+  "audit": {
+    "subtitle": "A complete log of every change in the system",
+    "entity": "Entity",
+    "action": "Action",
+    "by": "By",
+    "system": "System",
+    "ip": "IP address",
+    "allEntities": "All entities",
+    "allActions": "All actions"
+  },
+  "books": {
+    "subtitle": "Manage the library's books",
+    "title": "Book",
+    "language": "Language",
+    "searchPlaceholder": "Search for a book...",
+    "visible": "Visible",
+    "hidden": "Hidden",
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "hide": "Hide",
+    "show": "Show",
+    "makeAvailable": "Make available",
+    "makeUnavailable": "Make unavailable",
+    "confirmDelete": "Delete the book \"{{title}}\"?"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -45,6 +77,17 @@
   "sidebar": {
     "collapse": "Collapse menu",
     "expand": "Expand menu"
+  },
+  "dashboard": {
+    "downloads": "Downloads",
+    "reads": "Reads",
+    "activity": "Activity",
+    "activityDesc": "Downloads & reads over time",
+    "booksByCategory": "Books by category",
+    "topBooks": "Top Books",
+    "byDownloads": "By downloads",
+    "recentActivity": "Recent Activity",
+    "latestRecords": "Latest records"
   },
   "table": {
     "rowsPerPage": "Rows per page",
@@ -72,5 +115,28 @@
     "profile": "Profile",
     "logout": "Logout",
     "account": "Account"
+  },
+  "auth": {
+    "loginTitle": "Sign in",
+    "loginSubtitle": "Enter your credentials to access the dashboard",
+    "identifier": "Email or username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "signingIn": "Signing in...",
+    "forbidden": "This account does not have dashboard access"
+  },
+  "errors": {
+    "AUTH_INVALID_CREDENTIALS": "Email/username or password is incorrect",
+    "USER_INACTIVE": "This account is deactivated",
+    "FORBIDDEN": "You are not allowed to perform this action",
+    "UNAUTHORIZED": "Please sign in",
+    "USER_CANNOT_MODIFY_SELF": "You cannot deactivate or de-admin your own account",
+    "USER_ROLE_INVALID": "Unknown role name",
+    "USER_LAST_ADMIN": "The last admin cannot be removed",
+    "USER_NOT_FOUND": "User not found",
+    "BOOK_NOT_FOUND": "Book not found",
+    "NETWORK_ERROR": "Could not reach the server",
+    "VALIDATION_FAILED": "Please check the entered data",
+    "default": "An unexpected error occurred"
   }
 }

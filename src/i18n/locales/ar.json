@@ -25,7 +25,39 @@
     "email": "البريد الإلكتروني",
     "role": "الدور",
     "view": "عرض",
-    "back": "رجوع"
+    "back": "رجوع",
+    "saved": "تم الحفظ بنجاح",
+    "deleted": "تم الحذف بنجاح"
+  },
+  "users": {
+    "subtitle": "إدارة حسابات المستخدمين وأدوارهم",
+    "roles": "الأدوار",
+    "searchPlaceholder": "ابحث بالاسم أو البريد..."
+  },
+  "audit": {
+    "subtitle": "سجل كامل لكل التغييرات على النظام",
+    "entity": "الكيان",
+    "action": "الإجراء",
+    "by": "بواسطة",
+    "system": "النظام",
+    "ip": "عنوان IP",
+    "allEntities": "كل الكيانات",
+    "allActions": "كل الإجراءات"
+  },
+  "books": {
+    "subtitle": "إدارة الكتب في المكتبة",
+    "title": "الكتاب",
+    "language": "اللغة",
+    "searchPlaceholder": "ابحث عن كتاب...",
+    "visible": "ظاهر",
+    "hidden": "مخفي",
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "hide": "إخفاء",
+    "show": "إظهار",
+    "makeAvailable": "جعله متاحاً",
+    "makeUnavailable": "جعله غير متاح",
+    "confirmDelete": "حذف الكتاب \"{{title}}\"؟"
   },
   "nav": {
     "dashboard": "الرئيسية",
@@ -45,6 +77,17 @@
   "sidebar": {
     "collapse": "طيّ القائمة",
     "expand": "توسيع القائمة"
+  },
+  "dashboard": {
+    "downloads": "التنزيلات",
+    "reads": "القراءات",
+    "activity": "النشاط",
+    "activityDesc": "التنزيلات والقراءات عبر الزمن",
+    "booksByCategory": "الكتب حسب التصنيف",
+    "topBooks": "الأكثر تنزيلاً",
+    "byDownloads": "حسب عدد التنزيلات",
+    "recentActivity": "النشاط الأخير",
+    "latestRecords": "أحدث السجلات"
   },
   "table": {
     "rowsPerPage": "صفوف لكل صفحة",
@@ -72,5 +115,28 @@
     "profile": "الملف الشخصي",
     "logout": "تسجيل الخروج",
     "account": "الحساب"
+  },
+  "auth": {
+    "loginTitle": "تسجيل الدخول",
+    "loginSubtitle": "أدخل بياناتك للوصول إلى لوحة التحكم",
+    "identifier": "البريد الإلكتروني أو اسم المستخدم",
+    "password": "كلمة المرور",
+    "signIn": "دخول",
+    "signingIn": "جارٍ الدخول...",
+    "forbidden": "هذا الحساب لا يملك صلاحية الوصول للوحة التحكم"
+  },
+  "errors": {
+    "AUTH_INVALID_CREDENTIALS": "البريد/اسم المستخدم أو كلمة المرور غير صحيحة",
+    "USER_INACTIVE": "الحساب معطّل",
+    "FORBIDDEN": "ليس لديك صلاحية لهذا الإجراء",
+    "UNAUTHORIZED": "يجب تسجيل الدخول",
+    "USER_CANNOT_MODIFY_SELF": "لا يمكنك تعطيل حسابك أو إزالة صلاحيتك",
+    "USER_ROLE_INVALID": "اسم دور غير معروف",
+    "USER_LAST_ADMIN": "لا يمكن إزالة آخر مسؤول",
+    "USER_NOT_FOUND": "المستخدم غير موجود",
+    "BOOK_NOT_FOUND": "الكتاب غير موجود",
+    "NETWORK_ERROR": "تعذّر الاتصال بالخادم",
+    "VALIDATION_FAILED": "تحقّق من صحة البيانات المُدخلة",
+    "default": "حدث خطأ غير متوقّع"
   }
 }

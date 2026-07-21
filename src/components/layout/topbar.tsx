@@ -17,6 +17,7 @@ import {
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageToggle } from "./language-toggle";
 import { LogOut, User } from "lucide-react";
+import { useAuth } from "@/providers/auth-provider";
 
 type TopbarProps = {
   onMenuClick: () => void;
@@ -24,6 +25,8 @@ type TopbarProps = {
 
 export function Topbar({ onMenuClick }: TopbarProps) {
   const { t } = useTranslation();
+  const { user, logout } = useAuth();
+  const initials = (user?.username ?? "?").slice(0, 2).toUpperCase();
 
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/80 lg:px-6">
@@ -50,19 +53,25 @@ export function Topbar({ onMenuClick }: TopbarProps) {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2 px-2">
               <Avatar>
-                <AvatarFallback>AD</AvatarFallback>
+                <AvatarFallback>{initials}</AvatarFallback>
               </Avatar>
-              <span className="hidden text-sm font-medium sm:inline">Admin</span>
+              <span className="hidden text-sm font-medium sm:inline">{user?.username}</span>
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuLabel>{t("user.account")}</DropdownMenuLabel>
+            <DropdownMenuLabel>
+              <p>{user?.username}</p>
+              <p className="text-xs font-normal text-muted-foreground">{user?.email}</p>
+            </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
               <User className="h-4 w-4" />
               {t("user.profile")}
             </DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive focus:text-destructive">
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onSelect={() => logout()}
+            >
               <LogOut className="h-4 w-4" />
               {t("user.logout")}
             </DropdownMenuItem>
