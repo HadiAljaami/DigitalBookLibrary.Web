@@ -21,10 +21,13 @@ const client: AxiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// --- Attach the access token to every request ---
+// --- Attach the access token; let axios set the multipart boundary for uploads ---
 client.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = tokenStorage.getAccessToken();
   if (token) config.headers.Authorization = `Bearer ${token}`;
+  // FormData needs a multipart Content-Type with a boundary axios generates itself, so drop the
+  // instance's JSON default for these requests.
+  if (config.data instanceof FormData) delete config.headers["Content-Type"];
   return config;
 });
 
@@ -104,7 +107,10 @@ export const api = {
   upload: <T>(url: string, file: File, field = "file") => {
     const form = new FormData();
     form.append(field, file);
-    // Undefined lets axios set the multipart boundary instead of the client's JSON default.
-    return request<T>({ method: "POST", url, data: form, headers: { "Content-Type": undefined } });
+    return request<T>({ method: "POST", url, data: form });
   },
+
+  /** Fetches a binary response (e.g. a PDF) as a Blob, with the auth header applied. */
+  blob: (url: string) =>
+    client.request<Blob>({ method: "GET", url, responseType: "blob" }).then((r) => r.data),
 };

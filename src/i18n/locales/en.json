@@ -71,7 +71,8 @@
     "pages": "Pages",
     "publisher": "Publisher",
     "cover": "Cover image",
-    "pdf": "PDF file"
+    "pdf": "PDF file",
+    "replaceHint": "Choose a new file to replace the current one"
   },
   "nav": {
     "dashboard": "Dashboard",

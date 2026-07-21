@@ -18,6 +18,8 @@ export const catalogService = {
   uploadBookCover: (id: number, file: File) =>
     api.upload<{ imageUrl: string }>(`/books/${id}/cover`, file),
   uploadBookPdf: (id: number, file: File) => api.upload<null>(`/books/${id}/file`, file),
+  /** The book's PDF as a Blob (streams via the download endpoint, which requires auth). */
+  downloadBookPdf: (id: number) => api.blob(`/books/${id}/download`),
   // The toggle endpoints bind a SetFlagDto — the body field is `value`, not the flag's name.
   setBookVisibility: (id: number, value: boolean) =>
     api.patch<null>(`/books/${id}/visibility`, { value }),

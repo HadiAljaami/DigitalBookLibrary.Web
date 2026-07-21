@@ -32,6 +32,8 @@ export type BookDetails = BookListItem & {
   description: string | null;
   pages: number | null;
   publisherName: string | null;
+  hasFile: boolean;
+  fileSizeMb: number | null;
 };
 
 /** Create/update payload — mirrors the backend SaveBookDto. Files are uploaded separately. */

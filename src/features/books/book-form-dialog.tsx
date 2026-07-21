@@ -1,10 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2 } from "lucide-react";
+import { Loader2, FileText, ExternalLink } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -67,6 +67,24 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
 
   const coverRef = useRef<HTMLInputElement>(null);
   const pdfRef = useRef<HTMLInputElement>(null);
+  const [openingPdf, setOpeningPdf] = useState(false);
+
+  // Opens the book's PDF in a new tab. The download endpoint needs the auth header, so the file is
+  // fetched as a blob and shown via an object URL rather than a plain link.
+  async function openPdf() {
+    if (bookId == null) return;
+    setOpeningPdf(true);
+    try {
+      const blob = await catalogService.downloadBookPdf(bookId);
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+      setTimeout(() => URL.revokeObjectURL(url), 60_000);
+    } catch (err) {
+      toast.error(errorMessage(err));
+    } finally {
+      setOpeningPdf(false);
+    }
+  }
 
   const {
     register,
@@ -214,10 +232,45 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Field label={t("books.cover")}>
+              {isEdit && bookDetail.data?.imageUrl && (
+                <img
+                  src={bookDetail.data.imageUrl}
+                  alt={t("books.cover")}
+                  className="mb-2 h-28 w-20 rounded border object-cover"
+                />
+              )}
               <Input ref={coverRef} type="file" accept="image/*" className="cursor-pointer" />
+              {isEdit && bookDetail.data?.imageUrl && (
+                <p className="mt-1 text-xs text-muted-foreground">{t("books.replaceHint")}</p>
+              )}
             </Field>
+
             <Field label={t("books.pdf")}>
+              {isEdit && bookDetail.data?.hasFile && (
+                <div className="mb-2 flex items-center gap-2 rounded-md border p-2 text-sm">
+                  <FileText className="h-4 w-4 shrink-0 text-primary" />
+                  <span className="flex-1 truncate">{bookDetail.data.title}.pdf</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 gap-1"
+                    onClick={openPdf}
+                    disabled={openingPdf}
+                  >
+                    {openingPdf ? (
+                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                    ) : (
+                      <ExternalLink className="h-3.5 w-3.5" />
+                    )}
+                    {t("common.view")}
+                  </Button>
+                </div>
+              )}
               <Input ref={pdfRef} type="file" accept="application/pdf" className="cursor-pointer" />
+              {isEdit && bookDetail.data?.hasFile && (
+                <p className="mt-1 text-xs text-muted-foreground">{t("books.replaceHint")}</p>
+              )}
             </Field>
           </div>
 
