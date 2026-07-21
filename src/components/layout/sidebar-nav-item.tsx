@@ -1,18 +1,12 @@
-import { useState } from "react";
+import { useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ChevronDown } from "lucide-react";
 import { type NavItem } from "@/config/navigation";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/hooks/use-language";
+import { useSidebar } from "@/providers/sidebar-provider";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-
-/** Flyouts/tooltips open toward the content: away from whichever edge the rail sits on. */
-function useFlyoutSide() {
-  const { isRtl } = useLanguage();
-  return isRtl ? ("left" as const) : ("right" as const);
-}
 
 type Props = {
   item: NavItem;
@@ -20,10 +14,12 @@ type Props = {
   onNavigate: () => void;
 };
 
-const baseLink =
-  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors";
-const activeLink = "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm";
-const idleLink = "text-sidebar-foreground/80 hover:bg-white/5 hover:text-sidebar-foreground";
+// Shared classes. `rail` fixes the icon box size so collapsed items line up perfectly.
+const rowBase = "flex items-center gap-3 rounded-lg text-sm font-medium transition-colors";
+const rowExpanded = "px-3 py-2.5";
+const rail = "mx-auto h-11 w-11 justify-center p-0"; // fixed square → straight, aligned column
+const activeRow = "bg-sidebar-accent text-sidebar-accent-foreground shadow-sm";
+const idleRow = "text-sidebar-foreground/80 hover:bg-white/5 hover:text-sidebar-foreground";
 
 export function SidebarNavItem({ item, collapsed, onNavigate }: Props) {
   const { t } = useTranslation();
@@ -40,7 +36,7 @@ export function SidebarNavItem({ item, collapsed, onNavigate }: Props) {
         end={item.to === "/"}
         onClick={onNavigate}
         className={({ isActive }) =>
-          cn(baseLink, collapsed && "justify-center px-0", isActive ? activeLink : idleLink)
+          cn(rowBase, collapsed ? rail : rowExpanded, isActive ? activeRow : idleRow)
         }
       >
         <item.icon className="h-5 w-5 shrink-0" />
@@ -52,24 +48,47 @@ export function SidebarNavItem({ item, collapsed, onNavigate }: Props) {
 
   // ---- Parent with children ----
   return collapsed ? (
-    <CollapsedParent item={item} label={label} active={childActive} onNavigate={onNavigate} />
+    <CollapsedParent item={item} label={label} active={childActive} />
   ) : (
     <ExpandedParent item={item} label={label} active={childActive} onNavigate={onNavigate} />
   );
 }
 
-/** Wraps a collapsed icon so its label shows on hover. */
+/** Shows the label on hover when the rail is collapsed. */
 function IconTooltip({ label, children }: { label: string; children: React.ReactNode }) {
-  const side = useFlyoutSide();
+  const { isRtl } = useLanguage();
   return (
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>{children}</TooltipTrigger>
-      <TooltipContent side={side}>{label}</TooltipContent>
+      <TooltipContent side={isRtl ? "left" : "right"}>{label}</TooltipContent>
     </Tooltip>
   );
 }
 
-/** Expanded sidebar: inline accordion. Opens automatically when a child route is active. */
+/** Collapsed parent: a plain icon that expands the rail and opens its group on click. */
+function CollapsedParent({
+  item,
+  label,
+  active,
+}: {
+  item: NavItem;
+  label: string;
+  active: boolean;
+}) {
+  const { expandAndOpenGroup } = useSidebar();
+  const button = (
+    <button
+      type="button"
+      onClick={() => expandAndOpenGroup(item.labelKey)}
+      className={cn(rowBase, rail, active ? activeRow : idleRow)}
+    >
+      <item.icon className="h-5 w-5 shrink-0" />
+    </button>
+  );
+  return <IconTooltip label={label}>{button}</IconTooltip>;
+}
+
+/** Expanded parent: an inline accordion. Opens automatically when one of its routes is active. */
 function ExpandedParent({
   item,
   label,
@@ -82,14 +101,20 @@ function ExpandedParent({
   onNavigate: () => void;
 }) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(active);
+  const { isGroupOpen, toggleGroup, openGroup } = useSidebar();
+  const open = isGroupOpen(item.labelKey);
+
+  // Keep the active group open (e.g. after navigating straight to a child route).
+  useEffect(() => {
+    if (active) openGroup(item.labelKey);
+  }, [active, item.labelKey, openGroup]);
 
   return (
     <div>
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
-        className={cn(baseLink, "w-full", active ? "text-sidebar-foreground" : idleLink)}
+        onClick={() => toggleGroup(item.labelKey)}
+        className={cn(rowBase, rowExpanded, "w-full", active ? "text-sidebar-foreground" : idleRow)}
       >
         <item.icon className="h-5 w-5 shrink-0" />
         <span className="flex-1 text-start">{label}</span>
@@ -105,10 +130,9 @@ function ExpandedParent({
               onClick={onNavigate}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 rounded-lg py-2 ps-6 pe-3 text-sm transition-colors",
-                  // A short connector line keeps nested items visually anchored to the parent.
-                  "relative before:absolute before:start-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-current before:opacity-40",
-                  isActive ? activeLink : idleLink,
+                  "relative flex items-center rounded-lg py-2 ps-6 pe-3 text-sm transition-colors",
+                  "before:absolute before:start-2 before:h-1.5 before:w-1.5 before:rounded-full before:bg-current before:opacity-40",
+                  isActive ? activeRow : idleRow,
                 )
               }
             >
@@ -118,72 +142,5 @@ function ExpandedParent({
         </div>
       )}
     </div>
-  );
-}
-
-/** Collapsed rail: parent shows children in a flyout popover on click. */
-function CollapsedParent({
-  item,
-  label,
-  active,
-  onNavigate,
-}: {
-  item: NavItem;
-  label: string;
-  active: boolean;
-  onNavigate: () => void;
-}) {
-  const { t } = useTranslation();
-  const side = useFlyoutSide();
-
-  return (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          type="button"
-          className={cn(baseLink, "w-full justify-center px-0", active ? activeLink : idleLink)}
-        >
-          <item.icon className="h-5 w-5 shrink-0" />
-        </button>
-      </PopoverTrigger>
-      <PopoverContent side={side} align="start">
-        <FlyoutList item={item} label={label} onNavigate={onNavigate} t={t} />
-      </PopoverContent>
-    </Popover>
-  );
-}
-
-function FlyoutList({
-  item,
-  label,
-  onNavigate,
-  t,
-}: {
-  item: NavItem;
-  label: string;
-  onNavigate: () => void;
-  t: (k: string) => string;
-}) {
-  return (
-    <>
-      <p className="px-2 py-1.5 text-xs font-semibold text-muted-foreground">{label}</p>
-      {item.children!.map((child) => (
-        <NavLink
-          key={child.to}
-          to={child.to}
-          onClick={onNavigate}
-          className={({ isActive }) =>
-            cn(
-              "block rounded-sm px-2 py-1.5 text-sm transition-colors",
-              isActive
-                ? "bg-accent text-accent-foreground"
-                : "text-popover-foreground hover:bg-accent hover:text-accent-foreground",
-            )
-          }
-        >
-          {t(`nav.${child.labelKey}`)}
-        </NavLink>
-      ))}
-    </>
   );
 }
