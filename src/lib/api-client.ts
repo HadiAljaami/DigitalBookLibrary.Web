@@ -99,4 +99,12 @@ export const api = {
   put: <T>(url: string, data?: unknown) => request<T>({ method: "PUT", url, data }),
   patch: <T>(url: string, data?: unknown) => request<T>({ method: "PATCH", url, data }),
   delete: <T>(url: string) => request<T>({ method: "DELETE", url }),
+
+  /** Posts a single file as multipart/form-data under the given field name. */
+  upload: <T>(url: string, file: File, field = "file") => {
+    const form = new FormData();
+    form.append(field, file);
+    // Undefined lets axios set the multipart boundary instead of the client's JSON default.
+    return request<T>({ method: "POST", url, data: form, headers: { "Content-Type": undefined } });
+  },
 };

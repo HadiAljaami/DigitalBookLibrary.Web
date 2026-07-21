@@ -28,7 +28,9 @@
     "view": "View",
     "back": "Back",
     "saved": "Saved successfully",
-    "deleted": "Deleted successfully"
+    "deleted": "Deleted successfully",
+    "select": "Select...",
+    "required": "This field is required"
   },
   "users": {
     "subtitle": "Manage user accounts and their roles",
@@ -59,7 +61,17 @@
     "show": "Show",
     "makeAvailable": "Make available",
     "makeUnavailable": "Make unavailable",
-    "confirmDelete": "Delete the book \"{{title}}\"?"
+    "confirmDelete": "Delete the book \"{{title}}\"?",
+    "addButton": "Add book",
+    "edit": "Edit",
+    "addTitle": "Add a new book",
+    "editTitle": "Edit book",
+    "formSubtitle": "Fill in the book details. Cover and PDF are optional.",
+    "description": "Description",
+    "pages": "Pages",
+    "publisher": "Publisher",
+    "cover": "Cover image",
+    "pdf": "PDF file"
   },
   "nav": {
     "dashboard": "Dashboard",

@@ -27,6 +27,25 @@ export type BookQuery = PaginationParams & {
   desc?: boolean;
 };
 
+/** Full book detail (GET /books/{id}) — the list fields plus the editable metadata. */
+export type BookDetails = BookListItem & {
+  description: string | null;
+  pages: number | null;
+  publisherName: string | null;
+};
+
+/** Create/update payload — mirrors the backend SaveBookDto. Files are uploaded separately. */
+export type SaveBookDto = {
+  title: string;
+  authorId: number;
+  categoryId: number;
+  description?: string | null;
+  publishDate?: string | null;
+  pages?: number | null;
+  language?: string | null;
+  publisherName?: string | null;
+};
+
 export type Author = {
   id: number;
   fullName: string;

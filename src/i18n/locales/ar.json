@@ -28,7 +28,9 @@
     "view": "عرض",
     "back": "رجوع",
     "saved": "تم الحفظ بنجاح",
-    "deleted": "تم الحذف بنجاح"
+    "deleted": "تم الحذف بنجاح",
+    "select": "اختر...",
+    "required": "هذا الحقل مطلوب"
   },
   "users": {
     "subtitle": "إدارة حسابات المستخدمين وأدوارهم",
@@ -59,7 +61,17 @@
     "show": "إظهار",
     "makeAvailable": "جعله متاحاً",
     "makeUnavailable": "جعله غير متاح",
-    "confirmDelete": "حذف الكتاب \"{{title}}\"؟"
+    "confirmDelete": "حذف الكتاب \"{{title}}\"؟",
+    "addButton": "إضافة كتاب",
+    "edit": "تعديل",
+    "addTitle": "إضافة كتاب جديد",
+    "editTitle": "تعديل الكتاب",
+    "formSubtitle": "املأ بيانات الكتاب. الغلاف وملف PDF اختياريان.",
+    "description": "الوصف",
+    "pages": "الصفحات",
+    "publisher": "الناشر",
+    "cover": "صورة الغلاف",
+    "pdf": "ملف PDF"
   },
   "nav": {
     "dashboard": "الرئيسية",

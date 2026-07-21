@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, Eye, EyeOff, Download, CheckCircle2, XCircle, Trash2 } from "lucide-react";
+import { MoreHorizontal, Eye, EyeOff, Download, CheckCircle2, XCircle, Trash2, Pencil, Plus } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable } from "@/components/dashboard/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -13,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { BookFormDialog } from "@/features/books/book-form-dialog";
 import { useServerTable } from "@/hooks/use-server-table";
 import { toast } from "@/lib/toast-store";
 import { catalogService } from "@/services/catalog-service";
@@ -24,6 +26,10 @@ export function BooksPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { query, controller } = useServerTable();
+
+  // undefined = closed; null = create; number = edit that book.
+  const [formBookId, setFormBookId] = useState<number | null | undefined>(undefined);
+  const formOpen = formBookId !== undefined;
 
   const books = useQuery({
     queryKey: ["books", query],
@@ -132,6 +138,11 @@ export function BooksPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-48">
+              <DropdownMenuItem onSelect={() => setFormBookId(book.id)}>
+                <Pencil className="h-4 w-4" />
+                {t("books.edit")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuItem
                 onSelect={() => visibilityMutation.mutate({ id: book.id, value: !book.isVisible })}
               >
@@ -169,13 +180,28 @@ export function BooksPage() {
 
   return (
     <div>
-      <PageHeader title={t("nav.books")} description={t("books.subtitle")} />
+      <PageHeader
+        title={t("nav.books")}
+        description={t("books.subtitle")}
+        actions={
+          <Button onClick={() => setFormBookId(null)}>
+            <Plus className="h-4 w-4" />
+            {t("books.addButton")}
+          </Button>
+        }
+      />
       <DataTable
         columns={columns}
         data={books.data?.items ?? []}
         loading={books.isLoading}
         searchPlaceholder={t("books.searchPlaceholder")}
         server={controller(books.data?.totalCount ?? 0)}
+      />
+
+      <BookFormDialog
+        open={formOpen}
+        onOpenChange={(open) => !open && setFormBookId(undefined)}
+        bookId={formBookId ?? undefined}
       />
     </div>
   );
