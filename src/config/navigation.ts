@@ -6,14 +6,23 @@ import {
   PenTool,
   ScrollText,
   Settings,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 
 export type NavItem = {
   /** i18n key under "nav". */
   labelKey: string;
-  to: string;
+  /** Route path. Optional for a pure parent whose only job is to group children. */
+  to?: string;
   icon: LucideIcon;
+  /** Nested links. A parent renders as an expandable group. */
+  children?: NavChild[];
+};
+
+export type NavChild = {
+  labelKey: string;
+  to: string;
 };
 
 export type NavSection = {
@@ -24,7 +33,7 @@ export type NavSection = {
 
 /*
   Navigation is data-driven: to reuse this dashboard in another project, edit this list only.
-  The sidebar renders whatever is here — no layout code changes needed.
+  An item with `children` becomes an expandable group; a plain item is a direct link.
 */
 export const navigation: NavSection[] = [
   {
@@ -42,6 +51,15 @@ export const navigation: NavSection[] = [
     titleKey: "nav.administration",
     items: [
       { labelKey: "users", to: "/users", icon: Users },
+      {
+        labelKey: "reports",
+        icon: BarChart3,
+        children: [
+          { labelKey: "reportsOverview", to: "/reports/overview" },
+          { labelKey: "reportsBooks", to: "/reports/books" },
+          { labelKey: "reportsUsers", to: "/reports/users" },
+        ],
+      },
       { labelKey: "audit", to: "/audit", icon: ScrollText },
       { labelKey: "settings", to: "/settings", icon: Settings },
     ],

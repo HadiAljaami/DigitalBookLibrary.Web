@@ -36,8 +36,15 @@
     "audit": "سجل التدقيق",
     "settings": "الإعدادات",
     "reports": "التقارير",
+    "reportsOverview": "نظرة عامة",
+    "reportsBooks": "تقرير الكتب",
+    "reportsUsers": "تقرير المستخدمين",
     "catalog": "المحتوى",
     "administration": "الإدارة"
+  },
+  "sidebar": {
+    "collapse": "طيّ القائمة",
+    "expand": "توسيع القائمة"
   },
   "table": {
     "rowsPerPage": "صفوف لكل صفحة",

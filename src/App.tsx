@@ -15,6 +15,9 @@ export function App() {
         <Route path="authors" element={<PlaceholderPage title={t("nav.authors")} />} />
         <Route path="categories" element={<PlaceholderPage title={t("nav.categories")} />} />
         <Route path="users" element={<PlaceholderPage title={t("nav.users")} />} />
+        <Route path="reports/overview" element={<PlaceholderPage title={t("nav.reportsOverview")} />} />
+        <Route path="reports/books" element={<PlaceholderPage title={t("nav.reportsBooks")} />} />
+        <Route path="reports/users" element={<PlaceholderPage title={t("nav.reportsUsers")} />} />
         <Route path="audit" element={<PlaceholderPage title={t("nav.audit")} />} />
         <Route path="settings" element={<PlaceholderPage title={t("nav.settings")} />} />
         <Route path="*" element={<PlaceholderPage title="404" />} />

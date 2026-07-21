@@ -84,7 +84,12 @@ export function DashboardPage() {
             <p className="text-sm text-muted-foreground">Latest records</p>
           </div>
           <div className="p-2">
-            <DataTable columns={recentColumns} data={recentActivity} searchable={false} pageSize={5} />
+            <DataTable
+              columns={recentColumns}
+              data={recentActivity}
+              searchable={false}
+              pageSizeOptions={[5, 10]}
+            />
           </div>
         </div>
       </div>

@@ -36,8 +36,15 @@
     "audit": "Audit Log",
     "settings": "Settings",
     "reports": "Reports",
+    "reportsOverview": "Overview",
+    "reportsBooks": "Books Report",
+    "reportsUsers": "Users Report",
     "catalog": "Catalog",
     "administration": "Administration"
+  },
+  "sidebar": {
+    "collapse": "Collapse menu",
+    "expand": "Expand menu"
   },
   "table": {
     "rowsPerPage": "Rows per page",
