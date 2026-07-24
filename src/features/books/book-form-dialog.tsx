@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { catalogService } from "@/services/catalog-service";
 import { publisherService } from "@/services/publisher-service";
+import { useLanguages, useLocalName } from "@/hooks/use-lookups";
 import { flattenCategories } from "@/lib/categories";
 import { toast } from "@/lib/toast-store";
 import { errorMessage } from "@/lib/error-message";
@@ -38,7 +39,7 @@ const schema = z.object({
   description: z.string(),
   publishDate: z.string(),
   pages: z.string(),
-  language: z.string(),
+  languageId: z.string(),
   publisherId: z.string(),
 });
 type FormValues = z.infer<typeof schema>;
@@ -50,7 +51,7 @@ const EMPTY: FormValues = {
   description: "",
   publishDate: "",
   pages: "",
-  language: "",
+  languageId: "",
   publisherId: "",
 };
 
@@ -65,6 +66,8 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEdit = bookId != null;
+  const { name: localName } = useLocalName();
+  const languages = useLanguages();
 
   const coverRef = useRef<HTMLInputElement>(null);
   const pdfRef = useRef<HTMLInputElement>(null);
@@ -133,7 +136,7 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
         description: b.description ?? "",
         publishDate: b.publishDate ?? "",
         pages: b.pages != null ? String(b.pages) : "",
-        language: b.language ?? "",
+        languageId: b.languageId != null ? String(b.languageId) : "",
         publisherId: b.publisherId != null ? String(b.publisherId) : "",
       });
     } else if (!isEdit) {
@@ -150,7 +153,7 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
         description: values.description || null,
         publishDate: values.publishDate || null,
         pages: values.pages ? Number(values.pages) : null,
-        language: values.language || null,
+        languageId: values.languageId ? Number(values.languageId) : null,
         publisherId: values.publisherId ? Number(values.publisherId) : null,
       };
 
@@ -229,7 +232,22 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
               <Input type="number" min={1} {...register("pages")} />
             </Field>
             <Field label={t("books.language")}>
-              <Input {...register("language")} />
+              <Select
+                value={watch("languageId")}
+                onValueChange={(v) => setValue("languageId", v === "none" ? "" : v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("common.select")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
+                  {languages.data?.map((l) => (
+                    <SelectItem key={l.id} value={String(l.id)}>
+                      {localName(l)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
           </div>
 

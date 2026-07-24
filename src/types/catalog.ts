@@ -8,7 +8,9 @@ export type BookListItem = {
   categoryId: number;
   categoryName: string | null;
   imageUrl: string | null;
-  language: string | null;
+  languageId: number | null;
+  /** English fallback; the UI localizes by languageId via the lookups cache. */
+  languageName: string | null;
   publishDate: string | null;
   isAvailable: boolean;
   isVisible: boolean;
@@ -20,7 +22,7 @@ export type BookQuery = PaginationParams & {
   search?: string;
   authorId?: number;
   categoryId?: number;
-  language?: string;
+  languageId?: number;
   isAvailable?: boolean;
   /** title | date | rating | downloads | reads */
   sortBy?: string;
@@ -45,13 +47,15 @@ export type SaveBookDto = {
   description?: string | null;
   publishDate?: string | null;
   pages?: number | null;
-  language?: string | null;
+  languageId?: number | null;
   publisherId?: number | null;
 };
 
 export type Author = {
   id: number;
   fullName: string;
+  nationalityCountryId: number | null;
+  /** Demonym (English fallback); the UI localizes by nationalityCountryId. */
   nationality: string | null;
   imageUrl: string | null;
   isVisible: boolean;
@@ -61,7 +65,10 @@ export type Author = {
 export type AuthorDetails = Author & {
   bio: string | null;
   birthDate: string | null;
+  cityId: number | null;
   city: string | null;
+  /** Residence country, derived from the city (read-only). */
+  countryId: number | null;
   country: string | null;
 };
 
@@ -70,9 +77,8 @@ export type SaveAuthorDto = {
   fullName: string;
   bio?: string | null;
   birthDate?: string | null;
-  nationality?: string | null;
-  city?: string | null;
-  country?: string | null;
+  nationalityCountryId?: number | null;
+  cityId?: number | null;
   imageUrl?: string | null;
   isVisible: boolean;
 };

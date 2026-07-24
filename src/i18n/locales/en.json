@@ -126,6 +126,7 @@
     "nationality": "Nationality",
     "city": "City",
     "country": "Country",
+    "selectCountryFirst": "Select a country first",
     "imageUrl": "Image URL",
     "visible": "Visible",
     "hasAccount": "Has account",

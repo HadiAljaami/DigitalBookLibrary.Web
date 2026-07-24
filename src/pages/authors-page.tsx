@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { AuthorFormDialog } from "@/features/authors/author-form-dialog";
 import { useServerTable } from "@/hooks/use-server-table";
+import { useCountries, useLocalName, findById } from "@/hooks/use-lookups";
 import { toast } from "@/lib/toast-store";
 import { catalogService } from "@/services/catalog-service";
 import { errorMessage } from "@/lib/error-message";
@@ -30,6 +31,8 @@ export function AuthorsPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { query, controller } = useServerTable();
+  const { nationality: localNationality } = useLocalName();
+  const countries = useCountries();
   const [formAuthorId, setFormAuthorId] = useState<number | null | undefined>(undefined);
   const formOpen = formAuthorId !== undefined;
 
@@ -66,7 +69,9 @@ export function AuthorsPage() {
     {
       accessorKey: "nationality",
       header: t("authors.nationality"),
-      cell: ({ row }) => row.original.nationality ?? "—",
+      cell: ({ row }) =>
+        localNationality(findById(countries.data, row.original.nationalityCountryId), row.original.nationality) ||
+        "—",
     },
     {
       accessorKey: "hasAccount",

@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BookFormDialog } from "@/features/books/book-form-dialog";
 import { useServerTable } from "@/hooks/use-server-table";
+import { useLanguages, useLocalName, findById } from "@/hooks/use-lookups";
 import { toast } from "@/lib/toast-store";
 import { catalogService } from "@/services/catalog-service";
 import { errorMessage } from "@/lib/error-message";
@@ -26,6 +27,8 @@ export function BooksPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { query, controller } = useServerTable();
+  const { name: localName } = useLocalName();
+  const languages = useLanguages();
 
   // undefined = closed; null = create; number = edit that book.
   const [formBookId, setFormBookId] = useState<number | null | undefined>(undefined);
@@ -85,7 +88,12 @@ export function BooksPage() {
       ),
     },
     { accessorKey: "categoryName", header: t("nav.categories"), cell: ({ row }) => row.original.categoryName ?? "—" },
-    { accessorKey: "language", header: t("books.language"), cell: ({ row }) => row.original.language ?? "—" },
+    {
+      accessorKey: "languageId",
+      header: t("books.language"),
+      cell: ({ row }) =>
+        localName(findById(languages.data, row.original.languageId), row.original.languageName) || "—",
+    },
     {
       accessorKey: "publishDate",
       header: t("books.publishDate"),

@@ -17,7 +17,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { catalogService } from "@/services/catalog-service";
+import { useCountries, useCities, useLocalName } from "@/hooks/use-lookups";
 import { toast } from "@/lib/toast-store";
 import { errorMessage } from "@/lib/error-message";
 import { type SaveAuthorDto } from "@/types/catalog";
@@ -26,9 +34,11 @@ const schema = z.object({
   fullName: z.string().trim().min(1),
   bio: z.string(),
   birthDate: z.string(),
-  nationality: z.string(),
-  city: z.string(),
-  country: z.string(),
+  nationalityCountryId: z.string(),
+  // Residence country is not persisted directly; it filters the city list and is
+  // recovered on edit from the city's country.
+  residenceCountryId: z.string(),
+  cityId: z.string(),
   imageUrl: z.string(),
   isVisible: z.boolean(),
 });
@@ -38,9 +48,9 @@ const EMPTY: FormValues = {
   fullName: "",
   bio: "",
   birthDate: "",
-  nationality: "",
-  city: "",
-  country: "",
+  nationalityCountryId: "",
+  residenceCountryId: "",
+  cityId: "",
   imageUrl: "",
   isVisible: true,
 };
@@ -55,6 +65,8 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEdit = authorId != null;
+  const { name: localName } = useLocalName();
+  const countries = useCountries();
 
   const {
     register,
@@ -64,6 +76,9 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
     setValue,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: EMPTY });
+
+  const residenceCountryId = watch("residenceCountryId");
+  const cities = useCities(residenceCountryId ? Number(residenceCountryId) : undefined);
 
   const detail = useQuery({
     queryKey: ["author", authorId],
@@ -79,9 +94,9 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
         fullName: a.fullName,
         bio: a.bio ?? "",
         birthDate: a.birthDate ?? "",
-        nationality: a.nationality ?? "",
-        city: a.city ?? "",
-        country: a.country ?? "",
+        nationalityCountryId: a.nationalityCountryId != null ? String(a.nationalityCountryId) : "",
+        residenceCountryId: a.countryId != null ? String(a.countryId) : "",
+        cityId: a.cityId != null ? String(a.cityId) : "",
         imageUrl: a.imageUrl ?? "",
         isVisible: a.isVisible,
       });
@@ -96,9 +111,8 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
         fullName: values.fullName.trim(),
         bio: values.bio || null,
         birthDate: values.birthDate || null,
-        nationality: values.nationality || null,
-        city: values.city || null,
-        country: values.country || null,
+        nationalityCountryId: values.nationalityCountryId ? Number(values.nationalityCountryId) : null,
+        cityId: values.cityId ? Number(values.cityId) : null,
         imageUrl: values.imageUrl || null,
         isVisible: values.isVisible,
       };
@@ -132,14 +146,67 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
             <Field label={t("authors.birthDate")}>
               <Input type="date" {...register("birthDate")} />
             </Field>
+
             <Field label={t("authors.nationality")}>
-              <Input {...register("nationality")} />
+              <Select
+                value={watch("nationalityCountryId")}
+                onValueChange={(v) => setValue("nationalityCountryId", v === "none" ? "" : v)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("common.select")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
+                  {countries.data?.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {localName(c)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
-            <Field label={t("authors.city")}>
-              <Input {...register("city")} />
-            </Field>
+
             <Field label={t("authors.country")}>
-              <Input {...register("country")} />
+              <Select
+                value={watch("residenceCountryId")}
+                onValueChange={(v) => {
+                  setValue("residenceCountryId", v === "none" ? "" : v);
+                  // The current city belongs to the previous country — clear it.
+                  setValue("cityId", "");
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("common.select")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
+                  {countries.data?.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {localName(c)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </Field>
+
+            <Field label={t("authors.city")}>
+              <Select
+                value={watch("cityId")}
+                onValueChange={(v) => setValue("cityId", v === "none" ? "" : v)}
+                disabled={!residenceCountryId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={residenceCountryId ? t("common.select") : t("authors.selectCountryFirst")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
+                  {cities.data?.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {localName(c)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
           </div>
 

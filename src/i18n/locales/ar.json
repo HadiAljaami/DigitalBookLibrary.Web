@@ -126,6 +126,7 @@
     "nationality": "الجنسية",
     "city": "المدينة",
     "country": "الدولة",
+    "selectCountryFirst": "اختر الدولة أولاً",
     "imageUrl": "رابط الصورة",
     "visible": "ظاهر",
     "hasAccount": "له حساب",

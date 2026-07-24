@@ -17,7 +17,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { publisherService } from "@/services/publisher-service";
+import { useCountries, useCities, useLocalName } from "@/hooks/use-lookups";
 import { toast } from "@/lib/toast-store";
 import { errorMessage } from "@/lib/error-message";
 import { type SavePublisherDto } from "@/types/publisher";
@@ -28,8 +36,8 @@ const schema = z.object({
   website: z.string(),
   email: z.string(),
   phone: z.string(),
-  country: z.string(),
-  city: z.string(),
+  countryId: z.string(),
+  cityId: z.string(),
   address: z.string(),
   logoUrl: z.string(),
   isActive: z.boolean(),
@@ -42,8 +50,8 @@ const EMPTY: FormValues = {
   website: "",
   email: "",
   phone: "",
-  country: "",
-  city: "",
+  countryId: "",
+  cityId: "",
   address: "",
   logoUrl: "",
   isActive: true,
@@ -59,6 +67,8 @@ export function PublisherFormDialog({ open, onOpenChange, publisherId }: Props) 
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEdit = publisherId != null;
+  const { name: localName } = useLocalName();
+  const countries = useCountries();
 
   const {
     register,
@@ -68,6 +78,9 @@ export function PublisherFormDialog({ open, onOpenChange, publisherId }: Props) 
     setValue,
     formState: { errors },
   } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: EMPTY });
+
+  const countryId = watch("countryId");
+  const cities = useCities(countryId ? Number(countryId) : undefined);
 
   const detail = useQuery({
     queryKey: ["publisher", publisherId],
@@ -85,8 +98,8 @@ export function PublisherFormDialog({ open, onOpenChange, publisherId }: Props) 
         website: p.website ?? "",
         email: p.email ?? "",
         phone: p.phone ?? "",
-        country: p.country ?? "",
-        city: p.city ?? "",
+        countryId: p.countryId != null ? String(p.countryId) : "",
+        cityId: p.cityId != null ? String(p.cityId) : "",
         address: p.address ?? "",
         logoUrl: p.logoUrl ?? "",
         isActive: p.isActive,
@@ -104,8 +117,8 @@ export function PublisherFormDialog({ open, onOpenChange, publisherId }: Props) 
         website: values.website || null,
         email: values.email || null,
         phone: values.phone || null,
-        country: values.country || null,
-        city: values.city || null,
+        countryId: values.countryId ? Number(values.countryId) : null,
+        cityId: values.cityId ? Number(values.cityId) : null,
         address: values.address || null,
         logoUrl: values.logoUrl || null,
         isActive: values.isActive,
@@ -150,10 +163,44 @@ export function PublisherFormDialog({ open, onOpenChange, publisherId }: Props) 
               <Input dir="ltr" placeholder="https://..." {...register("logoUrl")} />
             </Field>
             <Field label={t("publishers.country")}>
-              <Input {...register("country")} />
+              <Select
+                value={watch("countryId")}
+                onValueChange={(v) => {
+                  setValue("countryId", v === "none" ? "" : v);
+                  setValue("cityId", "");
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={t("common.select")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
+                  {countries.data?.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {localName(c)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
             <Field label={t("publishers.city")}>
-              <Input {...register("city")} />
+              <Select
+                value={watch("cityId")}
+                onValueChange={(v) => setValue("cityId", v === "none" ? "" : v)}
+                disabled={!countryId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={countryId ? t("common.select") : t("authors.selectCountryFirst")} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">{t("common.none")}</SelectItem>
+                  {cities.data?.map((c) => (
+                    <SelectItem key={c.id} value={String(c.id)}>
+                      {localName(c)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
           </div>
 

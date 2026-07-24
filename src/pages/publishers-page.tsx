@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { PublisherFormDialog } from "@/features/publishers/publisher-form-dialog";
 import { useServerTable } from "@/hooks/use-server-table";
+import { useCountries, useCities, useLocalName, findById } from "@/hooks/use-lookups";
 import { toast } from "@/lib/toast-store";
 import { publisherService } from "@/services/publisher-service";
 import { errorMessage } from "@/lib/error-message";
@@ -25,6 +26,9 @@ export function PublishersPage() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { query, controller } = useServerTable();
+  const { name: localName } = useLocalName();
+  const countries = useCountries();
+  const allCities = useCities();
   const [formId, setFormId] = useState<number | null | undefined>(undefined);
   const formOpen = formId !== undefined;
 
@@ -55,8 +59,18 @@ export function PublishersPage() {
         </div>
       ),
     },
-    { accessorKey: "country", header: t("publishers.country"), cell: ({ row }) => row.original.country ?? "—" },
-    { accessorKey: "city", header: t("publishers.city"), cell: ({ row }) => row.original.city ?? "—" },
+    {
+      accessorKey: "countryId",
+      header: t("publishers.country"),
+      cell: ({ row }) =>
+        localName(findById(countries.data, row.original.countryId), row.original.countryName) || "—",
+    },
+    {
+      accessorKey: "cityId",
+      header: t("publishers.city"),
+      cell: ({ row }) =>
+        localName(findById(allCities.data, row.original.cityId), row.original.cityName) || "—",
+    },
     { accessorKey: "booksCount", header: t("publishers.books") },
     {
       accessorKey: "isActive",
