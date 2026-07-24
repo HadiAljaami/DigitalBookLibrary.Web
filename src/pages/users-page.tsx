@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, ShieldCheck } from "lucide-react";
+import { MoreHorizontal, ShieldCheck, Pencil, Trash2 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable } from "@/components/dashboard/data-table";
 import { Badge } from "@/components/ui/badge";
@@ -19,10 +19,12 @@ import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserFormDialog } from "@/features/users/user-form-dialog";
 import { useServerTable } from "@/hooks/use-server-table";
 import { toast } from "@/lib/toast-store";
 import { useAuth } from "@/providers/auth-provider";
@@ -40,6 +42,7 @@ export function UsersPage() {
   const { user: currentUser } = useAuth();
   const { query, controller } = useServerTable();
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "inactive">("all");
+  const [editUser, setEditUser] = useState<AdminUser | null>(null);
 
   const isActive = activeFilter === "all" ? undefined : activeFilter === "active";
 
@@ -65,6 +68,15 @@ export function UsersPage() {
       adminService.setUserRoles(id, roles),
     onSuccess: () => {
       toast.success(t("common.saved"));
+      invalidate();
+    },
+    onError: (err) => toast.error(errorMessage(err)),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: number) => adminService.deleteUser(id),
+    onSuccess: () => {
+      toast.success(t("common.deleted"));
       invalidate();
     },
     onError: (err) => toast.error(errorMessage(err)),
@@ -137,11 +149,15 @@ export function UsersPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
+              <DropdownMenuItem onSelect={() => setEditUser(user)}>
+                <Pencil className="h-4 w-4" />
+                {t("common.edit")}
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
               <DropdownMenuLabel className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4" />
                 {t("users.roles")}
               </DropdownMenuLabel>
-              <DropdownMenuSeparator />
               {ALL_ROLES.map((role) => (
                 <DropdownMenuCheckboxItem
                   key={role}
@@ -155,6 +171,18 @@ export function UsersPage() {
                   {role}
                 </DropdownMenuCheckboxItem>
               ))}
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onSelect={() => {
+                  if (confirm(t("users.confirmDelete", { name: user.username }))) {
+                    deleteMutation.mutate(user.id);
+                  }
+                }}
+              >
+                <Trash2 className="h-4 w-4" />
+                {t("common.delete")}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -183,6 +211,12 @@ export function UsersPage() {
             </SelectContent>
           </Select>
         }
+      />
+
+      <UserFormDialog
+        open={editUser !== null}
+        onOpenChange={(open) => !open && setEditUser(null)}
+        user={editUser}
       />
     </div>
   );

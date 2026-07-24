@@ -55,7 +55,10 @@
   "users": {
     "subtitle": "Manage user accounts and their roles",
     "roles": "Roles",
-    "searchPlaceholder": "Search by name or email..."
+    "searchPlaceholder": "Search by name or email...",
+    "editTitle": "Edit user",
+    "username": "Username",
+    "confirmDelete": "Delete the user \"{{name}}\"? Their books return to the library."
   },
   "audit": {
     "subtitle": "A complete log of every change in the system",
@@ -128,6 +131,7 @@
     "city": "City",
     "country": "Country",
     "selectCountryFirst": "Select a country first",
+    "image": "Photo",
     "imageUrl": "Image URL",
     "visible": "Visible",
     "hasAccount": "Has account",

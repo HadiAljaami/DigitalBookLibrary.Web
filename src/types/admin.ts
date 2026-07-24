@@ -16,6 +16,13 @@ export type AdminUserQuery = PaginationParams & {
   role?: string;
 };
 
+/** Create/update payload — mirrors the backend UpdateUserDto. */
+export type SaveUserDto = {
+  username: string;
+  email: string;
+  phone?: string | null;
+};
+
 export type AuditLog = {
   id: number;
   entityName: string;

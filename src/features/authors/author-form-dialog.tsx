@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -39,7 +39,6 @@ const schema = z.object({
   // recovered on edit from the city's country.
   residenceCountryId: z.string(),
   cityId: z.string(),
-  imageUrl: z.string(),
   isVisible: z.boolean(),
 });
 type FormValues = z.infer<typeof schema>;
@@ -51,7 +50,6 @@ const EMPTY: FormValues = {
   nationalityCountryId: "",
   residenceCountryId: "",
   cityId: "",
-  imageUrl: "",
   isVisible: true,
 };
 
@@ -67,6 +65,7 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
   const isEdit = authorId != null;
   const { name: localName } = useLocalName();
   const countries = useCountries();
+  const imageRef = useRef<HTMLInputElement>(null);
 
   const {
     register,
@@ -97,7 +96,6 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
         nationalityCountryId: a.nationalityCountryId != null ? String(a.nationalityCountryId) : "",
         residenceCountryId: a.countryId != null ? String(a.countryId) : "",
         cityId: a.cityId != null ? String(a.cityId) : "",
-        imageUrl: a.imageUrl ?? "",
         isVisible: a.isVisible,
       });
     } else if (!isEdit) {
@@ -106,17 +104,22 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
   }, [open, isEdit, detail.data, reset]);
 
   const mutation = useMutation({
-    mutationFn: (values: FormValues) => {
+    mutationFn: async (values: FormValues) => {
       const dto: SaveAuthorDto = {
         fullName: values.fullName.trim(),
         bio: values.bio || null,
         birthDate: values.birthDate || null,
         nationalityCountryId: values.nationalityCountryId ? Number(values.nationalityCountryId) : null,
         cityId: values.cityId ? Number(values.cityId) : null,
-        imageUrl: values.imageUrl || null,
         isVisible: values.isVisible,
       };
-      return isEdit ? catalogService.updateAuthor(authorId!, dto) : catalogService.createAuthor(dto);
+      const saved = isEdit
+        ? await catalogService.updateAuthor(authorId!, dto)
+        : await catalogService.createAuthor(dto);
+
+      // The photo is uploaded to the saved author's id, after its record exists.
+      const image = imageRef.current?.files?.[0];
+      if (image) await catalogService.uploadAuthorImage(saved.id, image);
     },
     onSuccess: () => {
       toast.success(t("common.saved"));
@@ -210,8 +213,18 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
             </Field>
           </div>
 
-          <Field label={t("authors.imageUrl")}>
-            <Input dir="ltr" placeholder="https://..." {...register("imageUrl")} />
+          <Field label={t("authors.image")}>
+            {isEdit && detail.data?.imageUrl && (
+              <img
+                src={detail.data.imageUrl}
+                alt={t("authors.image")}
+                className="mb-2 h-20 w-20 rounded-full border object-cover"
+              />
+            )}
+            <Input ref={imageRef} type="file" accept="image/*" className="cursor-pointer" />
+            {isEdit && detail.data?.imageUrl && (
+              <p className="mt-1 text-xs text-muted-foreground">{t("books.replaceHint")}</p>
+            )}
           </Field>
 
           <div className="flex items-center gap-3">

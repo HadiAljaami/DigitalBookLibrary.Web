@@ -84,7 +84,6 @@ export type SaveAuthorDto = {
   birthDate?: string | null;
   nationalityCountryId?: number | null;
   cityId?: number | null;
-  imageUrl?: string | null;
   isVisible: boolean;
 };
 

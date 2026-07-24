@@ -55,7 +55,10 @@
   "users": {
     "subtitle": "إدارة حسابات المستخدمين وأدوارهم",
     "roles": "الأدوار",
-    "searchPlaceholder": "ابحث بالاسم أو البريد..."
+    "searchPlaceholder": "ابحث بالاسم أو البريد...",
+    "editTitle": "تعديل المستخدم",
+    "username": "اسم المستخدم",
+    "confirmDelete": "حذف المستخدم \"{{name}}\"؟ ستعود كتبه إلى المكتبة."
   },
   "audit": {
     "subtitle": "سجل كامل لكل التغييرات على النظام",
@@ -128,6 +131,7 @@
     "city": "المدينة",
     "country": "الدولة",
     "selectCountryFirst": "اختر الدولة أولاً",
+    "image": "الصورة",
     "imageUrl": "رابط الصورة",
     "visible": "ظاهر",
     "hasAccount": "له حساب",

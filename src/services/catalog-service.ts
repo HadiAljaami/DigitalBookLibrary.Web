@@ -35,6 +35,8 @@ export const catalogService = {
   createAuthor: (body: SaveAuthorDto) => api.post<AuthorDetails>("/authors", body),
   updateAuthor: (id: number, body: SaveAuthorDto) => api.put<AuthorDetails>(`/authors/${id}`, body),
   deleteAuthor: (id: number) => api.delete<null>(`/authors/${id}`),
+  uploadAuthorImage: (id: number, file: File) =>
+    api.upload<{ imageUrl: string }>(`/authors/${id}/image`, file),
 
   categoryTree: () => api.get<Category[]>("/categories"),
   createCategory: (body: SaveCategoryDto) => api.post<Category>("/categories", body),
