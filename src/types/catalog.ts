@@ -42,6 +42,8 @@ export type BookDetails = BookListItem & {
   publisherName: string | null;
   hasFile: boolean;
   fileSizeMb: number | null;
+  averageRating: number;
+  ratingCount: number;
 };
 
 /** Create/update payload — mirrors the backend SaveBookDto. Files are uploaded separately. */

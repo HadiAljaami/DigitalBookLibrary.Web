@@ -65,6 +65,21 @@
     "passwordReset": "تمت إعادة تعيين كلمة المرور",
     "confirmDelete": "حذف المستخدم \"{{name}}\"؟ ستعود كتبه إلى المكتبة."
   },
+  "public": {
+    "brand": "واحة المعرفة",
+    "dashboard": "لوحة التحكم",
+    "signIn": "تسجيل الدخول",
+    "heroTitle": "مكتبة بين يديك",
+    "heroSubtitle": "تصفّح واقرأ وحمّل من مجموعة متنامية من الكتب.",
+    "searchPlaceholder": "ابحث بالعنوان أو الوصف...",
+    "allCategories": "كل التصنيفات",
+    "allLanguages": "كل اللغات",
+    "results": "{{count}} كتاب",
+    "backToLibrary": "العودة إلى المكتبة",
+    "read": "اقرأ الآن",
+    "download": "تحميل",
+    "signInToRead": "سجّل الدخول للقراءة"
+  },
   "settings": {
     "subtitle": "ملفك الشخصي وكلمة المرور والتفضيلات",
     "profile": "الملف الشخصي",

@@ -13,12 +13,21 @@ import { ReportsBooksPage } from "@/pages/reports-books-page";
 import { ReportsUsersPage } from "@/pages/reports-users-page";
 import { ReportsOverviewPage } from "@/pages/reports-overview-page";
 import { SettingsPage } from "@/pages/settings-page";
+import { PublicLayout } from "@/components/public/public-layout";
+import { PublicHomePage } from "@/pages/public/public-home-page";
+import { PublicBookPage } from "@/pages/public/public-book-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+
+      {/* Public visitor site "واحة المعرفة" — no authentication required to browse. */}
+      <Route path="/library" element={<PublicLayout />}>
+        <Route index element={<PublicHomePage />} />
+        <Route path="books/:id" element={<PublicBookPage />} />
+      </Route>
 
       <Route
         element={

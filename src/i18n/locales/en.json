@@ -65,6 +65,21 @@
     "passwordReset": "Password reset",
     "confirmDelete": "Delete the user \"{{name}}\"? Their books return to the library."
   },
+  "public": {
+    "brand": "Knowledge Oasis",
+    "dashboard": "Dashboard",
+    "signIn": "Sign in",
+    "heroTitle": "A library at your fingertips",
+    "heroSubtitle": "Browse, read and download from a growing collection of books.",
+    "searchPlaceholder": "Search by title or description...",
+    "allCategories": "All categories",
+    "allLanguages": "All languages",
+    "results": "{{count}} books",
+    "backToLibrary": "Back to the library",
+    "read": "Read now",
+    "download": "Download",
+    "signInToRead": "Sign in to read"
+  },
   "settings": {
     "subtitle": "Your profile, password and preferences",
     "profile": "Profile",
