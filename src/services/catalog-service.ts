@@ -2,11 +2,15 @@ import { api } from "@/lib/api-client";
 import { type PagedResult } from "@/types/api";
 import {
   type Author,
+  type AuthorDetails,
+  type AuthorQuery,
   type BookDetails,
   type BookListItem,
   type BookQuery,
   type Category,
+  type SaveAuthorDto,
   type SaveBookDto,
+  type SaveCategoryDto,
 } from "@/types/catalog";
 
 export const catalogService = {
@@ -26,8 +30,14 @@ export const catalogService = {
   setBookAvailability: (id: number, value: boolean) =>
     api.patch<null>(`/books/${id}/availability`, { value }),
 
-  authors: (query: { pageNumber?: number; pageSize?: number; search?: string }) =>
-    api.get<PagedResult<Author>>("/authors", query),
+  authors: (query: AuthorQuery) => api.get<PagedResult<Author>>("/authors", query),
+  author: (id: number) => api.get<AuthorDetails>(`/authors/${id}`),
+  createAuthor: (body: SaveAuthorDto) => api.post<AuthorDetails>("/authors", body),
+  updateAuthor: (id: number, body: SaveAuthorDto) => api.put<AuthorDetails>(`/authors/${id}`, body),
+  deleteAuthor: (id: number) => api.delete<null>(`/authors/${id}`),
 
   categoryTree: () => api.get<Category[]>("/categories"),
+  createCategory: (body: SaveCategoryDto) => api.post<Category>("/categories", body),
+  updateCategory: (id: number, body: SaveCategoryDto) => api.put<Category>(`/categories/${id}`, body),
+  deleteCategory: (id: number) => api.delete<null>(`/categories/${id}`),
 };

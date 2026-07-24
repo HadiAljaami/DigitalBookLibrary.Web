@@ -57,10 +57,41 @@ export type Author = {
   hasAccount: boolean;
 };
 
+export type AuthorDetails = Author & {
+  bio: string | null;
+  birthDate: string | null;
+  city: string | null;
+  country: string | null;
+};
+
+/** Create/update payload — mirrors the backend SaveAuthorDto. */
+export type SaveAuthorDto = {
+  fullName: string;
+  bio?: string | null;
+  birthDate?: string | null;
+  nationality?: string | null;
+  city?: string | null;
+  country?: string | null;
+  imageUrl?: string | null;
+  isVisible: boolean;
+};
+
+export type AuthorQuery = PaginationParams & {
+  search?: string;
+  sortBy?: string;
+  desc?: boolean;
+};
+
 /** A category node in the self-referencing tree. */
 export type Category = {
   id: number;
   name: string;
   parentCategoryId: number | null;
   children: Category[];
+};
+
+/** Create/update payload — mirrors the backend SaveCategoryDto. */
+export type SaveCategoryDto = {
+  name: string;
+  parentCategoryId?: number | null;
 };
