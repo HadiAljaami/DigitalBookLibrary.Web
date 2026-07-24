@@ -2,9 +2,12 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
+import { Eye } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable } from "@/components/dashboard/data-table";
+import { Button } from "@/components/ui/button";
 import { Badge, type BadgeProps } from "@/components/ui/badge";
+import { AuditDetailDialog } from "@/features/audit/audit-detail-dialog";
 import {
   Select,
   SelectContent,
@@ -31,6 +34,7 @@ export function AuditPage() {
   const { query, controller } = useServerTable();
   const [entityName, setEntityName] = useState("all");
   const [action, setAction] = useState("all");
+  const [detail, setDetail] = useState<AuditLog | null>(null);
 
   const audit = useQuery({
     queryKey: ["audit", query, entityName, action],
@@ -74,6 +78,16 @@ export function AuditPage() {
       cell: ({ row }) => row.original.username ?? t("audit.system"),
     },
     { accessorKey: "ipAddress", header: t("audit.ip"), cell: ({ row }) => row.original.ipAddress ?? "—" },
+    {
+      id: "actions",
+      header: "",
+      cell: ({ row }) => (
+        <Button variant="ghost" size="sm" className="h-8 gap-1" onClick={() => setDetail(row.original)}>
+          <Eye className="h-3.5 w-3.5" />
+          {t("audit.viewChanges")}
+        </Button>
+      ),
+    },
   ];
 
   return (
@@ -115,6 +129,12 @@ export function AuditPage() {
             </Select>
           </div>
         }
+      />
+
+      <AuditDetailDialog
+        open={detail !== null}
+        onOpenChange={(open) => !open && setDetail(null)}
+        entry={detail}
       />
     </div>
   );

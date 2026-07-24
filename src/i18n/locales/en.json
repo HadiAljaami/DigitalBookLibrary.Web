@@ -68,7 +68,13 @@
     "system": "System",
     "ip": "IP address",
     "allEntities": "All entities",
-    "allActions": "All actions"
+    "allActions": "All actions",
+    "viewChanges": "Changes",
+    "changesTitle": "What changed",
+    "field": "Field",
+    "before": "Before",
+    "after": "After",
+    "noChanges": "No field-level changes were recorded."
   },
   "books": {
     "subtitle": "Manage the library's books",

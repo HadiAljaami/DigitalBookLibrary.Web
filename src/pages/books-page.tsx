@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable } from "@/components/dashboard/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,6 +34,8 @@ export function BooksPage() {
   // undefined = closed; null = create; number = edit that book.
   const [formBookId, setFormBookId] = useState<number | null | undefined>(undefined);
   const formOpen = formBookId !== undefined;
+  // The book whose cover is shown enlarged (null = no preview).
+  const [preview, setPreview] = useState<BookListItem | null>(null);
 
   const books = useQuery({
     queryKey: ["books", query],
@@ -73,13 +76,20 @@ export function BooksPage() {
       header: t("books.title"),
       cell: ({ row }) => (
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-8 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
-            {row.original.imageUrl ? (
+          {row.original.imageUrl ? (
+            <button
+              type="button"
+              onClick={() => setPreview(row.original)}
+              className="flex h-10 w-8 shrink-0 items-center justify-center overflow-hidden rounded bg-muted ring-offset-background transition hover:ring-2 hover:ring-ring hover:ring-offset-1"
+              title={t("common.view")}
+            >
               <img src={row.original.imageUrl} alt="" className="h-full w-full object-cover" />
-            ) : (
+            </button>
+          ) : (
+            <div className="flex h-10 w-8 shrink-0 items-center justify-center overflow-hidden rounded bg-muted">
               <span className="text-xs text-muted-foreground">—</span>
-            )}
-          </div>
+            </div>
+          )}
           <div>
             <p className="font-medium">{row.original.title}</p>
             <p className="text-xs text-muted-foreground">
@@ -215,6 +225,21 @@ export function BooksPage() {
         onOpenChange={(open) => !open && setFormBookId(undefined)}
         bookId={formBookId ?? undefined}
       />
+
+      <Dialog open={preview !== null} onOpenChange={(open) => !open && setPreview(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{preview?.title}</DialogTitle>
+          </DialogHeader>
+          {preview?.imageUrl && (
+            <img
+              src={preview.imageUrl}
+              alt={preview.title}
+              className="mx-auto max-h-[70vh] w-auto rounded-lg border object-contain"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

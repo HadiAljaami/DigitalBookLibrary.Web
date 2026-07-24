@@ -68,7 +68,13 @@
     "system": "النظام",
     "ip": "عنوان IP",
     "allEntities": "كل الكيانات",
-    "allActions": "كل الإجراءات"
+    "allActions": "كل الإجراءات",
+    "viewChanges": "التغييرات",
+    "changesTitle": "ما الذي تغيّر",
+    "field": "الحقل",
+    "before": "قبل",
+    "after": "بعد",
+    "noChanges": "لم تُسجَّل تغييرات على مستوى الحقول."
   },
   "books": {
     "subtitle": "إدارة الكتب في المكتبة",
