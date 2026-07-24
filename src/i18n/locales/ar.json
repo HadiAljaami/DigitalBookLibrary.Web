@@ -156,6 +156,15 @@
     "confirmDelete": "حذف التصنيف \"{{name}}\"؟",
     "empty": "لا توجد تصنيفات بعد"
   },
+  "reports": {
+    "booksSubtitle": "صفِّ الفهرس وصدّر النتائج",
+    "print": "طباعة",
+    "exportCsv": "تصدير CSV",
+    "fromDate": "من تاريخ",
+    "toDate": "إلى تاريخ",
+    "totalBooks": "إجمالي الكتب",
+    "generatedAt": "أُنشئ في {{date}}"
+  },
   "dashboard": {
     "downloads": "التنزيلات",
     "reads": "القراءات",

@@ -10,6 +10,7 @@ import { BooksPage } from "@/pages/books-page";
 import { AuthorsPage } from "@/pages/authors-page";
 import { CategoriesPage } from "@/pages/categories-page";
 import { PublishersPage } from "@/pages/publishers-page";
+import { ReportsBooksPage } from "@/pages/reports-books-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
@@ -33,7 +34,7 @@ export function App() {
         <Route path="publishers" element={<PublishersPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="reports/overview" element={<PlaceholderPage title={t("nav.reportsOverview")} />} />
-        <Route path="reports/books" element={<PlaceholderPage title={t("nav.reportsBooks")} />} />
+        <Route path="reports/books" element={<ReportsBooksPage />} />
         <Route path="reports/users" element={<PlaceholderPage title={t("nav.reportsUsers")} />} />
         <Route path="audit" element={<AuditPage />} />
         <Route path="settings" element={<PlaceholderPage title={t("nav.settings")} />} />

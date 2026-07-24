@@ -156,6 +156,15 @@
     "confirmDelete": "Delete the category \"{{name}}\"?",
     "empty": "No categories yet"
   },
+  "reports": {
+    "booksSubtitle": "Filter the catalog and export the results",
+    "print": "Print",
+    "exportCsv": "Export CSV",
+    "fromDate": "From date",
+    "toDate": "To date",
+    "totalBooks": "Total books",
+    "generatedAt": "Generated on {{date}}"
+  },
   "dashboard": {
     "downloads": "Downloads",
     "reads": "Reads",
