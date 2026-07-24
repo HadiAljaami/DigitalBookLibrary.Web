@@ -7,6 +7,7 @@ import {
   ScrollText,
   Settings,
   BarChart3,
+  Building2,
   type LucideIcon,
 } from "lucide-react";
 
@@ -45,6 +46,7 @@ export const navigation: NavSection[] = [
       { labelKey: "books", to: "/books", icon: BookOpen },
       { labelKey: "authors", to: "/authors", icon: PenTool },
       { labelKey: "categories", to: "/categories", icon: FolderTree },
+      { labelKey: "publishers", to: "/publishers", icon: Building2 },
     ],
   },
   {

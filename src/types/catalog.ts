@@ -31,6 +31,7 @@ export type BookQuery = PaginationParams & {
 export type BookDetails = BookListItem & {
   description: string | null;
   pages: number | null;
+  publisherId: number | null;
   publisherName: string | null;
   hasFile: boolean;
   fileSizeMb: number | null;
@@ -45,7 +46,7 @@ export type SaveBookDto = {
   publishDate?: string | null;
   pages?: number | null;
   language?: string | null;
-  publisherName?: string | null;
+  publisherId?: number | null;
 };
 
 export type Author = {

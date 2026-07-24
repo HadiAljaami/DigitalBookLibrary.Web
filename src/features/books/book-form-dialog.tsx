@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { catalogService } from "@/services/catalog-service";
+import { publisherService } from "@/services/publisher-service";
 import { flattenCategories } from "@/lib/categories";
 import { toast } from "@/lib/toast-store";
 import { errorMessage } from "@/lib/error-message";
@@ -38,7 +39,7 @@ const schema = z.object({
   publishDate: z.string(),
   pages: z.string(),
   language: z.string(),
-  publisherName: z.string(),
+  publisherId: z.string(),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -50,7 +51,7 @@ const EMPTY: FormValues = {
   publishDate: "",
   pages: "",
   language: "",
-  publisherName: "",
+  publisherId: "",
 };
 
 type Props = {
@@ -108,6 +109,12 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
   });
   const flatCategories = categories.data ? flattenCategories(categories.data) : [];
 
+  const publishers = useQuery({
+    queryKey: ["publishers", "all"],
+    queryFn: () => publisherService.list({ pageSize: 100, isActive: true }),
+    enabled: open,
+  });
+
   // Prefill in edit mode.
   const bookDetail = useQuery({
     queryKey: ["book", bookId],
@@ -127,7 +134,7 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
         publishDate: b.publishDate ?? "",
         pages: b.pages != null ? String(b.pages) : "",
         language: b.language ?? "",
-        publisherName: b.publisherName ?? "",
+        publisherId: b.publisherId != null ? String(b.publisherId) : "",
       });
     } else if (!isEdit) {
       reset(EMPTY);
@@ -144,7 +151,7 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
         publishDate: values.publishDate || null,
         pages: values.pages ? Number(values.pages) : null,
         language: values.language || null,
-        publisherName: values.publisherName || null,
+        publisherId: values.publisherId ? Number(values.publisherId) : null,
       };
 
       const saved = isEdit
@@ -227,7 +234,22 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
           </div>
 
           <Field label={t("books.publisher")}>
-            <Input {...register("publisherName")} />
+            <Select
+              value={watch("publisherId")}
+              onValueChange={(v) => setValue("publisherId", v === "none" ? "" : v)}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder={t("common.select")} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">{t("common.none")}</SelectItem>
+                {publishers.data?.items.map((p) => (
+                  <SelectItem key={p.id} value={String(p.id)}>
+                    {p.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </Field>
 
           <div className="grid gap-4 sm:grid-cols-2">

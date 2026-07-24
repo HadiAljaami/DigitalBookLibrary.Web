@@ -9,6 +9,7 @@ import { AuditPage } from "@/pages/audit-page";
 import { BooksPage } from "@/pages/books-page";
 import { AuthorsPage } from "@/pages/authors-page";
 import { CategoriesPage } from "@/pages/categories-page";
+import { PublishersPage } from "@/pages/publishers-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
@@ -29,6 +30,7 @@ export function App() {
         <Route path="books" element={<BooksPage />} />
         <Route path="authors" element={<AuthorsPage />} />
         <Route path="categories" element={<CategoriesPage />} />
+        <Route path="publishers" element={<PublishersPage />} />
         <Route path="users" element={<UsersPage />} />
         <Route path="reports/overview" element={<PlaceholderPage title={t("nav.reportsOverview")} />} />
         <Route path="reports/books" element={<PlaceholderPage title={t("nav.reportsBooks")} />} />
