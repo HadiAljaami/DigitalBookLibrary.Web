@@ -5,6 +5,8 @@ export type AdminUser = {
   username: string;
   email: string;
   phone: string | null;
+  fullName: string | null;
+  imageUrl: string | null;
   isActive: boolean;
   dateCreated: string;
   roles: string[];
@@ -16,11 +18,22 @@ export type AdminUserQuery = PaginationParams & {
   role?: string;
 };
 
-/** Create/update payload — mirrors the backend UpdateUserDto. */
+/** Edit payload — mirrors the backend UpdateUserDto. */
 export type SaveUserDto = {
   username: string;
   email: string;
   phone?: string | null;
+  fullName?: string | null;
+};
+
+/** Create payload — mirrors the backend CreateUserDto. */
+export type CreateUserDto = {
+  username: string;
+  email: string;
+  password: string;
+  fullName?: string | null;
+  phone?: string | null;
+  roles: string[];
 };
 
 export type AuditLog = {

@@ -1,5 +1,6 @@
 import { Menu, Search, Bell } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -25,6 +26,7 @@ type TopbarProps = {
 
 export function Topbar({ onMenuClick }: TopbarProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const initials = (user?.username ?? "?").slice(0, 2).toUpperCase();
 
@@ -64,7 +66,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
               <p className="text-xs font-normal text-muted-foreground">{user?.email}</p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => navigate("/settings")}>
               <User className="h-4 w-4" />
               {t("user.profile")}
             </DropdownMenuItem>

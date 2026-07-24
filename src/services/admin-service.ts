@@ -5,6 +5,7 @@ import {
   type AdminUserQuery,
   type AuditLog,
   type AuditQuery,
+  type CreateUserDto,
   type SaveUserDto,
 } from "@/types/admin";
 
@@ -17,7 +18,12 @@ export const adminService = {
   setUserRoles: (id: number, roles: string[]) =>
     api.patch<AdminUser>(`/admin/users/${id}/roles`, { roles }),
 
+  createUser: (body: CreateUserDto) => api.post<AdminUser>("/admin/users", body),
+
   updateUser: (id: number, body: SaveUserDto) => api.put<AdminUser>(`/admin/users/${id}`, body),
+
+  resetUserPassword: (id: number, newPassword: string) =>
+    api.put<null>(`/admin/users/${id}/password`, { newPassword }),
 
   deleteUser: (id: number) => api.delete<null>(`/admin/users/${id}`),
 

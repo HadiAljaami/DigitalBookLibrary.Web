@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { AppLayout } from "@/components/layout/app-layout";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { LoginPage } from "@/pages/login-page";
@@ -13,11 +12,10 @@ import { PublishersPage } from "@/pages/publishers-page";
 import { ReportsBooksPage } from "@/pages/reports-books-page";
 import { ReportsUsersPage } from "@/pages/reports-users-page";
 import { ReportsOverviewPage } from "@/pages/reports-overview-page";
+import { SettingsPage } from "@/pages/settings-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
-  const { t } = useTranslation();
-
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
@@ -39,7 +37,7 @@ export function App() {
         <Route path="reports/books" element={<ReportsBooksPage />} />
         <Route path="reports/users" element={<ReportsUsersPage />} />
         <Route path="audit" element={<AuditPage />} />
-        <Route path="settings" element={<PlaceholderPage title={t("nav.settings")} />} />
+        <Route path="settings" element={<SettingsPage />} />
         <Route path="*" element={<PlaceholderPage title="404" />} />
       </Route>
     </Routes>

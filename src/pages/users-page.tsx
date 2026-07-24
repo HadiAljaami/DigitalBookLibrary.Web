@@ -2,12 +2,13 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal, ShieldCheck, Pencil, Trash2 } from "lucide-react";
+import { MoreHorizontal, ShieldCheck, Pencil, Trash2, Plus, KeyRound, User } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/page-header";
 import { DataTable } from "@/components/dashboard/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   Select,
   SelectContent,
@@ -25,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { UserFormDialog } from "@/features/users/user-form-dialog";
+import { ResetPasswordDialog } from "@/features/users/reset-password-dialog";
 import { useServerTable } from "@/hooks/use-server-table";
 import { toast } from "@/lib/toast-store";
 import { useAuth } from "@/providers/auth-provider";
@@ -42,7 +44,9 @@ export function UsersPage() {
   const { user: currentUser } = useAuth();
   const { query, controller } = useServerTable();
   const [activeFilter, setActiveFilter] = useState<"all" | "active" | "inactive">("all");
-  const [editUser, setEditUser] = useState<AdminUser | null>(null);
+  // undefined = closed; null = create; AdminUser = edit.
+  const [formUser, setFormUser] = useState<AdminUser | null | undefined>(undefined);
+  const [resetUser, setResetUser] = useState<AdminUser | null>(null);
 
   const isActive = activeFilter === "all" ? undefined : activeFilter === "active";
 
@@ -90,7 +94,26 @@ export function UsersPage() {
   }
 
   const columns: ColumnDef<AdminUser>[] = [
-    { accessorKey: "username", header: t("common.name") },
+    {
+      accessorKey: "username",
+      header: t("common.name"),
+      cell: ({ row }) => (
+        <div className="flex items-center gap-3">
+          <Avatar className="h-8 w-8">
+            {row.original.imageUrl && <AvatarImage src={row.original.imageUrl} alt="" />}
+            <AvatarFallback>
+              {row.original.imageUrl ? <User className="h-4 w-4" /> : row.original.username.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <p className="font-medium">{row.original.username}</p>
+            {row.original.fullName && row.original.fullName !== row.original.username && (
+              <p className="text-xs text-muted-foreground">{row.original.fullName}</p>
+            )}
+          </div>
+        </div>
+      ),
+    },
     { accessorKey: "email", header: t("common.email") },
     {
       accessorKey: "phone",
@@ -149,9 +172,13 @@ export function UsersPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={() => setEditUser(user)}>
+              <DropdownMenuItem onSelect={() => setFormUser(user)}>
                 <Pencil className="h-4 w-4" />
                 {t("common.edit")}
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setResetUser(user)}>
+                <KeyRound className="h-4 w-4" />
+                {t("users.resetPassword")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuLabel className="flex items-center gap-2">
@@ -192,7 +219,16 @@ export function UsersPage() {
 
   return (
     <div>
-      <PageHeader title={t("nav.users")} description={t("users.subtitle")} />
+      <PageHeader
+        title={t("nav.users")}
+        description={t("users.subtitle")}
+        actions={
+          <Button onClick={() => setFormUser(null)}>
+            <Plus className="h-4 w-4" />
+            {t("users.addButton")}
+          </Button>
+        }
+      />
       <DataTable
         columns={columns}
         data={users.data?.items ?? []}
@@ -214,9 +250,15 @@ export function UsersPage() {
       />
 
       <UserFormDialog
-        open={editUser !== null}
-        onOpenChange={(open) => !open && setEditUser(null)}
-        user={editUser}
+        open={formUser !== undefined}
+        onOpenChange={(open) => !open && setFormUser(undefined)}
+        user={formUser ?? null}
+      />
+
+      <ResetPasswordDialog
+        open={resetUser !== null}
+        onOpenChange={(open) => !open && setResetUser(null)}
+        user={resetUser}
       />
     </div>
   );
