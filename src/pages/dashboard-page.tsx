@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { type ColumnDef } from "@tanstack/react-table";
@@ -9,30 +10,84 @@ import { DataTable } from "@/components/dashboard/data-table";
 import { Badge } from "@/components/ui/badge";
 import { dashboardService } from "@/services/dashboard-service";
 import { formatDate, formatNumber, formatPeriod } from "@/lib/format";
-import { type RecentActivity } from "@/types/dashboard";
+import {
+  type DistributionBy,
+  type RecentActivity,
+  type RecentActivityType,
+  type SeriesInterval,
+  type TopBooksMetric,
+} from "@/types/dashboard";
+
+/** A compact segmented toggle used in chart headers. */
+function Segmented<T extends string>({
+  value,
+  onChange,
+  options,
+}: {
+  value: T;
+  onChange: (v: T) => void;
+  options: { value: T; label: string }[];
+}) {
+  return (
+    <div className="inline-flex rounded-md border bg-muted/40 p-0.5 text-xs">
+      {options.map((o) => (
+        <button
+          key={o.value}
+          type="button"
+          onClick={() => onChange(o.value)}
+          className={
+            "rounded px-2.5 py-1 transition " +
+            (value === o.value
+              ? "bg-background font-medium text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground")
+          }
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 export function DashboardPage() {
   const { t } = useTranslation();
 
+  const [interval, setInterval] = useState<SeriesInterval>("day");
+  const [distBy, setDistBy] = useState<DistributionBy>("category");
+  const [topMetric, setTopMetric] = useState<TopBooksMetric>("downloads");
+  const [recentType, setRecentType] = useState<RecentActivityType>("books");
+
   const summary = useQuery({ queryKey: ["dashboard", "summary"], queryFn: dashboardService.summary });
   const activity = useQuery({
-    queryKey: ["dashboard", "activity", "day"],
-    queryFn: () => dashboardService.activitySeries("day"),
+    queryKey: ["dashboard", "activity", interval],
+    queryFn: () => dashboardService.activitySeries(interval),
   });
   const distribution = useQuery({
-    queryKey: ["dashboard", "distribution", "category"],
-    queryFn: () => dashboardService.distribution("category"),
+    queryKey: ["dashboard", "distribution", distBy],
+    queryFn: () => dashboardService.distribution(distBy),
   });
   const topBooks = useQuery({
-    queryKey: ["dashboard", "top-books", "downloads"],
-    queryFn: () => dashboardService.topBooks("downloads", 5),
+    queryKey: ["dashboard", "top-books", topMetric],
+    queryFn: () => dashboardService.topBooks(topMetric, 5),
   });
   const recent = useQuery({
-    queryKey: ["dashboard", "recent", "books"],
-    queryFn: () => dashboardService.recent("books", 6),
+    queryKey: ["dashboard", "recent", recentType],
+    queryFn: () => dashboardService.recent(recentType, 6),
   });
 
   const s = summary.data;
+
+  const metricLabel: Record<TopBooksMetric, string> = {
+    downloads: t("dashboard.downloads"),
+    reads: t("dashboard.reads"),
+    rating: t("reports.rating"),
+  };
+  // The API field for the "rating" metric is averageRating.
+  const metricKey: Record<TopBooksMetric, string> = {
+    downloads: "downloads",
+    reads: "reads",
+    rating: "averageRating",
+  };
 
   const recentColumns: ColumnDef<RecentActivity>[] = [
     { accessorKey: "title", header: t("common.name") },
@@ -52,7 +107,7 @@ export function DashboardPage() {
 
   const activityData = (activity.data ?? []).map((p) => ({
     ...p,
-    period: formatPeriod(p.period, "day"),
+    period: formatPeriod(p.period, interval),
   }));
 
   return (
@@ -83,29 +138,71 @@ export function DashboardPage() {
               { key: "downloads", label: t("dashboard.downloads") },
               { key: "reads", label: t("dashboard.reads") },
             ]}
+            action={
+              <Segmented
+                value={interval}
+                onChange={setInterval}
+                options={[
+                  { value: "day", label: t("dashboard.daily") },
+                  { value: "month", label: t("dashboard.monthly") },
+                ]}
+              />
+            }
           />
         </div>
         <DonutChartCard
-          title={t("nav.categories")}
-          description={t("dashboard.booksByCategory")}
+          title={distBy === "category" ? t("nav.categories") : t("books.language")}
+          description={distBy === "category" ? t("dashboard.booksByCategory") : t("dashboard.booksByLanguage")}
           data={distribution.data ?? []}
           nameKey="label"
           valueKey="count"
+          action={
+            <Segmented
+              value={distBy}
+              onChange={setDistBy}
+              options={[
+                { value: "category", label: t("nav.categories") },
+                { value: "language", label: t("books.language") },
+              ]}
+            />
+          }
         />
       </div>
 
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <BarChartCard
           title={t("dashboard.topBooks")}
-          description={t("dashboard.byDownloads")}
+          description={metricLabel[topMetric]}
           data={topBooks.data ?? []}
           xKey="title"
-          series={[{ key: "downloads", label: t("dashboard.downloads") }]}
+          series={[{ key: metricKey[topMetric], label: metricLabel[topMetric] }]}
+          action={
+            <Segmented
+              value={topMetric}
+              onChange={setTopMetric}
+              options={[
+                { value: "downloads", label: t("dashboard.downloads") },
+                { value: "reads", label: t("dashboard.reads") },
+                { value: "rating", label: t("reports.rating") },
+              ]}
+            />
+          }
         />
         <div className="rounded-xl border bg-card">
-          <div className="p-5 pb-2">
-            <h3 className="font-semibold">{t("dashboard.recentActivity")}</h3>
-            <p className="text-sm text-muted-foreground">{t("dashboard.latestRecords")}</p>
+          <div className="flex items-start justify-between p-5 pb-2">
+            <div>
+              <h3 className="font-semibold">{t("dashboard.recentActivity")}</h3>
+              <p className="text-sm text-muted-foreground">{t("dashboard.latestRecords")}</p>
+            </div>
+            <Segmented
+              value={recentType}
+              onChange={setRecentType}
+              options={[
+                { value: "books", label: t("nav.books") },
+                { value: "users", label: t("nav.users") },
+                { value: "comments", label: t("reports.comments") },
+              ]}
+            />
           </div>
           <div className="p-2">
             <DataTable
