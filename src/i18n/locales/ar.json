@@ -163,6 +163,14 @@
     "fromDate": "من تاريخ",
     "toDate": "إلى تاريخ",
     "totalBooks": "إجمالي الكتب",
+    "totalUsers": "إجمالي المستخدمين",
+    "usersSubtitle": "نشاط كل مستخدم عبر المكتبة",
+    "overviewSubtitle": "لقطة قابلة للطباعة عن المكتبة كاملة",
+    "saved": "المحفوظة",
+    "comments": "التعليقات",
+    "ratings": "التقييمات",
+    "rating": "التقييم",
+    "lastActive": "آخر نشاط",
     "generatedAt": "أُنشئ في {{date}}"
   },
   "dashboard": {

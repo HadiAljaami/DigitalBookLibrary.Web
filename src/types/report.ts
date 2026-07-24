@@ -22,3 +22,33 @@ export type BooksReport = {
   rows: BookListItem[];
   totals: BooksReportTotals;
 };
+
+export type UsersReportQuery = {
+  search?: string;
+  isActive?: boolean;
+};
+
+export type UserReportRow = {
+  userId: number;
+  username: string;
+  email: string;
+  isActive: boolean;
+  dateCreated: string;
+  reads: number;
+  downloads: number;
+  saved: number;
+  comments: number;
+  ratings: number;
+  lastActivity: string | null;
+};
+
+export type UsersReportTotals = {
+  users: number;
+  reads: number;
+  downloads: number;
+};
+
+export type UsersReport = {
+  rows: UserReportRow[];
+  totals: UsersReportTotals;
+};

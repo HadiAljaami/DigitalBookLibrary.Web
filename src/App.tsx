@@ -11,6 +11,8 @@ import { AuthorsPage } from "@/pages/authors-page";
 import { CategoriesPage } from "@/pages/categories-page";
 import { PublishersPage } from "@/pages/publishers-page";
 import { ReportsBooksPage } from "@/pages/reports-books-page";
+import { ReportsUsersPage } from "@/pages/reports-users-page";
+import { ReportsOverviewPage } from "@/pages/reports-overview-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
@@ -33,9 +35,9 @@ export function App() {
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="publishers" element={<PublishersPage />} />
         <Route path="users" element={<UsersPage />} />
-        <Route path="reports/overview" element={<PlaceholderPage title={t("nav.reportsOverview")} />} />
+        <Route path="reports/overview" element={<ReportsOverviewPage />} />
         <Route path="reports/books" element={<ReportsBooksPage />} />
-        <Route path="reports/users" element={<PlaceholderPage title={t("nav.reportsUsers")} />} />
+        <Route path="reports/users" element={<ReportsUsersPage />} />
         <Route path="audit" element={<AuditPage />} />
         <Route path="settings" element={<PlaceholderPage title={t("nav.settings")} />} />
         <Route path="*" element={<PlaceholderPage title="404" />} />

@@ -163,6 +163,14 @@
     "fromDate": "From date",
     "toDate": "To date",
     "totalBooks": "Total books",
+    "totalUsers": "Total users",
+    "usersSubtitle": "Per-user activity across the library",
+    "overviewSubtitle": "A printable snapshot of the whole library",
+    "saved": "Saved",
+    "comments": "Comments",
+    "ratings": "Ratings",
+    "rating": "Rating",
+    "lastActive": "Last active",
     "generatedAt": "Generated on {{date}}"
   },
   "dashboard": {
