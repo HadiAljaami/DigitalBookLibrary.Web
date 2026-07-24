@@ -89,6 +89,7 @@
     "formSubtitle": "Fill in the book details. Cover and PDF are optional.",
     "description": "Description",
     "pages": "Pages",
+    "addAuthor": "Add an author...",
     "publisher": "Publisher",
     "cover": "Cover image",
     "pdf": "PDF file",

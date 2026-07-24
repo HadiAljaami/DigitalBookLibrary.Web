@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Loader2, FileText, ExternalLink } from "lucide-react";
+import { Loader2, FileText, ExternalLink, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +14,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -34,7 +35,7 @@ import { type SaveBookDto } from "@/types/catalog";
 
 const schema = z.object({
   title: z.string().trim().min(1),
-  authorId: z.string().min(1),
+  authorIds: z.array(z.number()).min(1),
   categoryId: z.string().min(1),
   description: z.string(),
   publishDate: z.string(),
@@ -46,7 +47,7 @@ type FormValues = z.infer<typeof schema>;
 
 const EMPTY: FormValues = {
   title: "",
-  authorId: "",
+  authorIds: [],
   categoryId: "",
   description: "",
   publishDate: "",
@@ -131,7 +132,7 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
       const b = bookDetail.data;
       reset({
         title: b.title,
-        authorId: String(b.authorId),
+        authorIds: b.authors.map((a) => a.id),
         categoryId: String(b.categoryId),
         description: b.description ?? "",
         publishDate: b.publishDate ?? "",
@@ -148,7 +149,7 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
     mutationFn: async (values: FormValues) => {
       const dto: SaveBookDto = {
         title: values.title.trim(),
-        authorId: Number(values.authorId),
+        authorIds: values.authorIds,
         categoryId: Number(values.categoryId),
         description: values.description || null,
         publishDate: values.publishDate || null,
@@ -188,22 +189,61 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
             <Input {...register("title")} />
           </Field>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <Field label={t("nav.authors")} error={errors.authorId && t("common.required")}>
-              <Select value={watch("authorId")} onValueChange={(v) => setValue("authorId", v, { shouldValidate: true })}>
-                <SelectTrigger>
-                  <SelectValue placeholder={t("common.select")} />
-                </SelectTrigger>
-                <SelectContent>
-                  {authors.data?.items.map((a) => (
-                    <SelectItem key={a.id} value={String(a.id)}>
-                      {a.fullName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </Field>
+          <Field label={t("nav.authors")} error={errors.authorIds && t("common.required")}>
+            {(() => {
+              const selectedIds = watch("authorIds");
+              const all = authors.data?.items ?? [];
+              const available = all.filter((a) => !selectedIds.includes(a.id));
+              return (
+                <div className="space-y-2">
+                  {selectedIds.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {selectedIds.map((id) => {
+                        const a = all.find((x) => x.id === id);
+                        return (
+                          <Badge key={id} variant="secondary" className="gap-1 pe-1">
+                            {a?.fullName ?? `#${id}`}
+                            <button
+                              type="button"
+                              className="rounded-sm hover:text-destructive"
+                              onClick={() =>
+                                setValue(
+                                  "authorIds",
+                                  selectedIds.filter((x) => x !== id),
+                                  { shouldValidate: true },
+                                )
+                              }
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                  )}
+                  <Select
+                    value=""
+                    onValueChange={(v) =>
+                      setValue("authorIds", [...selectedIds, Number(v)], { shouldValidate: true })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={t("books.addAuthor")} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {available.map((a) => (
+                        <SelectItem key={a.id} value={String(a.id)}>
+                          {a.fullName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              );
+            })()}
+          </Field>
 
+          <div className="grid gap-4 sm:grid-cols-2">
             <Field label={t("nav.categories")} error={errors.categoryId && t("common.required")}>
               <Select value={watch("categoryId")} onValueChange={(v) => setValue("categoryId", v, { shouldValidate: true })}>
                 <SelectTrigger>

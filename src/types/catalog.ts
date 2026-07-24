@@ -1,10 +1,15 @@
 import { type PaginationParams } from "./api";
 
+/** A book's author, trimmed to what listings need. */
+export type AuthorRef = {
+  id: number;
+  name: string;
+};
+
 export type BookListItem = {
   id: number;
   title: string;
-  authorId: number;
-  authorName: string | null;
+  authors: AuthorRef[];
   categoryId: number;
   categoryName: string | null;
   imageUrl: string | null;
@@ -42,7 +47,7 @@ export type BookDetails = BookListItem & {
 /** Create/update payload — mirrors the backend SaveBookDto. Files are uploaded separately. */
 export type SaveBookDto = {
   title: string;
-  authorId: number;
+  authorIds: number[];
   categoryId: number;
   description?: string | null;
   publishDate?: string | null;

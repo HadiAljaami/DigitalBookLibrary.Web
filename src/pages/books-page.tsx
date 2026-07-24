@@ -82,7 +82,11 @@ export function BooksPage() {
           </div>
           <div>
             <p className="font-medium">{row.original.title}</p>
-            <p className="text-xs text-muted-foreground">{row.original.authorName ?? "—"}</p>
+            <p className="text-xs text-muted-foreground">
+              {row.original.authors.length > 0
+                ? row.original.authors.map((a) => a.name).join("، ")
+                : "—"}
+            </p>
           </div>
         </div>
       ),
