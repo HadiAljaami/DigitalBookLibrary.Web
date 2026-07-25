@@ -16,6 +16,9 @@ import { SettingsPage } from "@/pages/settings-page";
 import { PublicLayout } from "@/components/public/public-layout";
 import { PublicHomePage } from "@/pages/public/public-home-page";
 import { PublicBookPage } from "@/pages/public/public-book-page";
+import { PublicAuthorsPage } from "@/pages/public/public-authors-page";
+import { PublicAuthorPage } from "@/pages/public/public-author-page";
+import { PublicCategoriesPage } from "@/pages/public/public-categories-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
@@ -27,6 +30,9 @@ export function App() {
       <Route path="/library" element={<PublicLayout />}>
         <Route index element={<PublicHomePage />} />
         <Route path="books/:id" element={<PublicBookPage />} />
+        <Route path="authors" element={<PublicAuthorsPage />} />
+        <Route path="authors/:id" element={<PublicAuthorPage />} />
+        <Route path="categories" element={<PublicCategoriesPage />} />
       </Route>
 
       <Route

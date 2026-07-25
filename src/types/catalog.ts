@@ -77,6 +77,8 @@ export type AuthorDetails = Author & {
   /** Residence country, derived from the city (read-only). */
   countryId: number | null;
   country: string | null;
+  /** The author's books (visible ones for non-admins). */
+  books: BookListItem[];
 };
 
 /** Create/update payload — mirrors the backend SaveAuthorDto. */

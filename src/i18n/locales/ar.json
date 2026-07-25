@@ -76,9 +76,15 @@
     "allLanguages": "كل اللغات",
     "results": "{{count}} كتاب",
     "backToLibrary": "العودة إلى المكتبة",
+    "backToAuthors": "العودة إلى المؤلفين",
     "read": "اقرأ الآن",
     "download": "تحميل",
-    "signInToRead": "سجّل الدخول للقراءة"
+    "signInToRead": "سجّل الدخول للقراءة",
+    "authorsSubtitle": "تعرّف على المؤلفين خلف المجموعة",
+    "categoriesSubtitle": "تصفّح المكتبة حسب الموضوع",
+    "browse": "تصفّح",
+    "registeredAuthor": "مؤلف مسجّل",
+    "authorBooks": "كتب هذا المؤلف"
   },
   "settings": {
     "subtitle": "ملفك الشخصي وكلمة المرور والتفضيلات",

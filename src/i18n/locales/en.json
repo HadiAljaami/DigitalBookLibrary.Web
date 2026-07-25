@@ -76,9 +76,15 @@
     "allLanguages": "All languages",
     "results": "{{count}} books",
     "backToLibrary": "Back to the library",
+    "backToAuthors": "Back to authors",
     "read": "Read now",
     "download": "Download",
-    "signInToRead": "Sign in to read"
+    "signInToRead": "Sign in to read",
+    "authorsSubtitle": "Discover the authors behind the collection",
+    "categoriesSubtitle": "Browse the library by topic",
+    "browse": "Browse",
+    "registeredAuthor": "Registered author",
+    "authorBooks": "Books by this author"
   },
   "settings": {
     "subtitle": "Your profile, password and preferences",

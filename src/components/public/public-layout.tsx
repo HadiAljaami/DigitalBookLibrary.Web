@@ -1,4 +1,4 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { BookOpenText, LogIn, LayoutDashboard } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,30 @@ export function PublicLayout() {
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <BookOpenText className="h-5 w-5" />
             </span>
-            <span className="text-lg font-bold tracking-tight">{t("public.brand")}</span>
+            <span className="hidden text-lg font-bold tracking-tight sm:inline">{t("public.brand")}</span>
           </Link>
+
+          <nav className="flex items-center gap-1 text-sm">
+            {[
+              { to: "/library", label: t("nav.books"), end: true },
+              { to: "/library/authors", label: t("nav.authors"), end: false },
+              { to: "/library/categories", label: t("nav.categories"), end: false },
+            ].map((item) => (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                end={item.end}
+                className={({ isActive }) =>
+                  "rounded-md px-3 py-1.5 transition " +
+                  (isActive
+                    ? "bg-muted font-medium text-foreground"
+                    : "text-muted-foreground hover:text-foreground")
+                }
+              >
+                {item.label}
+              </NavLink>
+            ))}
+          </nav>
 
           <div className="flex flex-1 items-center justify-end gap-1">
             <LanguageToggle />

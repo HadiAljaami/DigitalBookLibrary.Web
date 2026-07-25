@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { Search, BookOpen } from "lucide-react";
@@ -12,9 +12,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { CategorySelect } from "@/components/catalog/category-select";
 import { catalogService } from "@/services/catalog-service";
 import { useLanguages, useLocalName } from "@/hooks/use-lookups";
-import { flattenCategories } from "@/lib/categories";
 import { type BookQuery } from "@/types/catalog";
 
 const ALL = "all";
@@ -24,10 +24,11 @@ export function PublicHomePage() {
   const { t } = useTranslation();
   const { name: localName } = useLocalName();
   const languages = useLanguages();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
-  const [categoryId, setCategoryId] = useState(ALL);
+  const [categoryId, setCategoryId] = useState(searchParams.get("category") ?? ALL);
   const [languageId, setLanguageId] = useState(ALL);
   const [page, setPage] = useState(1);
 
@@ -40,7 +41,13 @@ export function PublicHomePage() {
   }
 
   const categories = useQuery({ queryKey: ["categories", "tree"], queryFn: () => catalogService.categoryTree() });
-  const flatCategories = categories.data ? flattenCategories(categories.data) : [];
+
+  function onCategoryChange(v: string) {
+    setCategoryId(v);
+    setPage(1);
+    // Keep the URL in sync so a category deep-link (from the categories page) stays shareable.
+    setSearchParams(v === ALL ? {} : { category: v }, { replace: true });
+  }
 
   const query: BookQuery = {
     pageNumber: page,
@@ -64,34 +71,45 @@ export function PublicHomePage() {
 
   return (
     <div className="space-y-8">
-      {/* Hero */}
-      <section className="rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-8 text-center sm:p-12">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{t("public.heroTitle")}</h1>
-        <p className="mx-auto mt-3 max-w-2xl text-muted-foreground">{t("public.heroSubtitle")}</p>
-        <div className="relative mx-auto mt-6 max-w-xl">
-          <Search className="pointer-events-none absolute start-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            value={search}
-            onChange={(e) => onSearchChange(e.target.value)}
-            placeholder={t("public.searchPlaceholder")}
-            className="h-12 ps-11 text-base"
-          />
+      {/* Hero with a looping background video and a readable overlay. */}
+      <section className="relative overflow-hidden rounded-2xl border">
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="/hero.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-hidden
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/55 to-black/40" />
+        <div className="relative px-6 py-14 text-center sm:px-10 sm:py-20">
+          <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow sm:text-5xl">
+            {t("public.heroTitle")}
+          </h1>
+          <p className="mx-auto mt-3 max-w-2xl text-white/85 sm:text-lg">{t("public.heroSubtitle")}</p>
+          <div className="relative mx-auto mt-7 max-w-xl">
+            <Search className="pointer-events-none absolute start-3 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              value={search}
+              onChange={(e) => onSearchChange(e.target.value)}
+              placeholder={t("public.searchPlaceholder")}
+              className="h-12 border-transparent bg-background ps-11 text-base shadow-lg"
+            />
+          </div>
         </div>
       </section>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
-        <Select value={categoryId} onValueChange={(v) => { setCategoryId(v); setPage(1); }}>
-          <SelectTrigger className="w-48">
-            <SelectValue placeholder={t("nav.categories")} />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value={ALL}>{t("public.allCategories")}</SelectItem>
-            {flatCategories.map((c) => (
-              <SelectItem key={c.id} value={String(c.id)}>{c.label}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+        <CategorySelect
+          tree={categories.data ?? []}
+          value={categoryId}
+          onValueChange={onCategoryChange}
+          className="w-52"
+          placeholder={t("nav.categories")}
+          leadingOption={{ value: ALL, label: t("public.allCategories") }}
+        />
         <Select value={languageId} onValueChange={(v) => { setLanguageId(v); setPage(1); }}>
           <SelectTrigger className="w-40">
             <SelectValue placeholder={t("books.language")} />

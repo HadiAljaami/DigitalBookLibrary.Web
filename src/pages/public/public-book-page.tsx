@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, BookOpen, Star, Download, Eye, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { ZoomableImage } from "@/components/ui/zoomable-image";
 import { catalogService } from "@/services/catalog-service";
 import { useLanguages, useLocalName, findById } from "@/hooks/use-lookups";
 import { useAuth } from "@/providers/auth-provider";
@@ -55,7 +56,13 @@ export function PublicBookPage() {
         <div className="mx-auto w-full max-w-[280px]">
           <div className="flex aspect-[3/4] items-center justify-center overflow-hidden rounded-xl border bg-muted">
             {b.imageUrl ? (
-              <img src={b.imageUrl} alt={b.title} className="h-full w-full object-cover" />
+              <ZoomableImage
+                src={b.imageUrl}
+                alt={b.title}
+                wrapperClassName="h-full w-full"
+                className="h-full w-full object-cover"
+                caption={b.title}
+              />
             ) : (
               <BookOpen className="h-16 w-16 text-muted-foreground" />
             )}
