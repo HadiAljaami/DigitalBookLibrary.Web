@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 import { AppLayout } from "@/components/layout/app-layout";
 import { ProtectedRoute } from "@/components/auth/protected-route";
+import { AdminRoute } from "@/components/auth/admin-route";
 import { LoginPage } from "@/pages/login-page";
 import { DashboardPage } from "@/pages/dashboard-page";
 import { UsersPage } from "@/pages/users-page";
@@ -19,26 +20,39 @@ import { PublicBookPage } from "@/pages/public/public-book-page";
 import { PublicAuthorsPage } from "@/pages/public/public-authors-page";
 import { PublicAuthorPage } from "@/pages/public/public-author-page";
 import { PublicCategoriesPage } from "@/pages/public/public-categories-page";
+import { PublicRegisterPage } from "@/pages/public/public-register-page";
+import { PublicLibraryPage } from "@/pages/public/public-library-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<PublicRegisterPage />} />
 
-      {/* Public visitor site "واحة المعرفة" — no authentication required to browse. */}
+      {/* Public visitor site "واحة المعرفة" — browsing needs no authentication. */}
       <Route path="/library" element={<PublicLayout />}>
         <Route index element={<PublicHomePage />} />
         <Route path="books/:id" element={<PublicBookPage />} />
         <Route path="authors" element={<PublicAuthorsPage />} />
         <Route path="authors/:id" element={<PublicAuthorPage />} />
         <Route path="categories" element={<PublicCategoriesPage />} />
+        <Route
+          path="me"
+          element={
+            <ProtectedRoute>
+              <PublicLibraryPage />
+            </ProtectedRoute>
+          }
+        />
       </Route>
 
       <Route
         element={
           <ProtectedRoute>
-            <AppLayout />
+            <AdminRoute>
+              <AppLayout />
+            </AdminRoute>
           </ProtectedRoute>
         }
       >

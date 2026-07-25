@@ -1,18 +1,25 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { BookOpenText, LogIn, LayoutDashboard } from "lucide-react";
+import { BookOpenText, LogIn, LayoutDashboard, LogOut, Library, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { useAuth } from "@/providers/auth-provider";
-import { Roles } from "@/types/auth";
 
 /** Chrome for the public visitor site "واحة المعرفة" — distinct from the admin dashboard shell. */
 export function PublicLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuth();
-  const isAdmin = user?.roles.includes(Roles.Admin);
+  const { isAuthenticated, isAdmin, user, logout } = useAuth();
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -50,17 +57,63 @@ export function PublicLayout() {
           <div className="flex flex-1 items-center justify-end gap-1">
             <LanguageToggle />
             <ThemeToggle />
-            {isAdmin && (
-              <Button variant="ghost" size="sm" className="gap-2" onClick={() => navigate("/")}>
-                <LayoutDashboard className="h-4 w-4" />
-                <span className="hidden sm:inline">{t("public.dashboard")}</span>
-              </Button>
-            )}
-            {!isAuthenticated && (
-              <Button size="sm" className="gap-2" onClick={() => navigate("/login")}>
-                <LogIn className="h-4 w-4" />
-                {t("public.signIn")}
-              </Button>
+
+            {!isAuthenticated ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="hidden gap-2 sm:inline-flex"
+                  onClick={() => navigate("/register")}
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {t("auth.createAccount")}
+                </Button>
+                <Button
+                  size="sm"
+                  className="gap-2"
+                  onClick={() => navigate("/login", { state: { from: "/library" } })}
+                >
+                  <LogIn className="h-4 w-4" />
+                  {t("public.signIn")}
+                </Button>
+              </>
+            ) : (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="gap-2 px-2">
+                    <Avatar className="h-8 w-8">
+                      <AvatarFallback>{(user?.username ?? "?").slice(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                    <span className="hidden text-sm font-medium sm:inline">{user?.username}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-52">
+                  <DropdownMenuLabel>
+                    <p>{user?.username}</p>
+                    <p className="text-xs font-normal text-muted-foreground">{user?.email}</p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onSelect={() => navigate("/library/me")}>
+                    <Library className="h-4 w-4" />
+                    {t("public.myLibrary")}
+                  </DropdownMenuItem>
+                  {isAdmin && (
+                    <DropdownMenuItem onSelect={() => navigate("/")}>
+                      <LayoutDashboard className="h-4 w-4" />
+                      {t("public.dashboard")}
+                    </DropdownMenuItem>
+                  )}
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-destructive focus:text-destructive"
+                    onSelect={() => logout()}
+                  >
+                    <LogOut className="h-4 w-4" />
+                    {t("user.logout")}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
         </div>

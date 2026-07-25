@@ -1,13 +1,28 @@
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, BookOpen, Star, Download, Eye, Lock } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  ArrowLeft,
+  BookOpen,
+  Star,
+  Download,
+  Eye,
+  Lock,
+  Bookmark,
+  BookmarkCheck,
+  Loader2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ZoomableImage } from "@/components/ui/zoomable-image";
 import { catalogService } from "@/services/catalog-service";
+import { memberService } from "@/services/member-service";
 import { useLanguages, useLocalName, findById } from "@/hooks/use-lookups";
 import { useAuth } from "@/providers/auth-provider";
+import { toast } from "@/lib/toast-store";
+import { errorMessage } from "@/lib/error-message";
 import { formatNumber } from "@/lib/format";
 
 export function PublicBookPage() {
@@ -17,12 +32,69 @@ export function PublicBookPage() {
   const { name: localName } = useLocalName();
   const { isAuthenticated } = useAuth();
   const languages = useLanguages();
+  const queryClient = useQueryClient();
+
+  const [readerUrl, setReaderUrl] = useState<string | null>(null);
+  const [busy, setBusy] = useState<"read" | "download" | null>(null);
 
   const book = useQuery({
     queryKey: ["public-book", bookId],
     queryFn: () => catalogService.book(bookId),
     enabled: Number.isFinite(bookId),
   });
+
+  // Whether the current member has saved this book (checked against their saved list).
+  const savedList = useQuery({
+    queryKey: ["me-saved-ids"],
+    queryFn: () => memberService.savedBooks({ pageNumber: 1, pageSize: 200 }),
+    enabled: isAuthenticated,
+  });
+  const isSaved = savedList.data?.items.some((x) => x.id === bookId) ?? false;
+
+  const saveMutation = useMutation({
+    mutationFn: () => (isSaved ? memberService.unsave(bookId) : memberService.save(bookId)),
+    onSuccess: () => {
+      toast.success(isSaved ? t("public.removed") : t("public.saved"));
+      queryClient.invalidateQueries({ queryKey: ["me-saved-ids"] });
+      queryClient.invalidateQueries({ queryKey: ["me-library"] });
+    },
+    onError: (err) => toast.error(errorMessage(err)),
+  });
+
+  // Streams the PDF (auth-only) and opens it inline in a reader dialog — a preview, not a download.
+  async function openReader() {
+    setBusy("read");
+    try {
+      const blob = await memberService.readBook(bookId);
+      setReaderUrl(URL.createObjectURL(blob));
+    } catch (err) {
+      toast.error(errorMessage(err));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function downloadPdf() {
+    setBusy("download");
+    try {
+      const blob = await memberService.downloadBook(bookId);
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${book.data?.title ?? "book"}.pdf`;
+      link.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+    } catch (err) {
+      toast.error(errorMessage(err));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  function closeReader() {
+    if (readerUrl) URL.revokeObjectURL(readerUrl);
+    setReaderUrl(null);
+  }
 
   const b = book.data;
 
@@ -105,22 +177,40 @@ export function PublicBookPage() {
             <p className="whitespace-pre-line leading-relaxed text-foreground/90">{b.description}</p>
           )}
 
-          {/* Actions — reading/downloading requires an account (wired in the next slice). */}
+          {/* Actions — reading and downloading require a signed-in member. */}
           <div className="flex flex-wrap gap-3 pt-2">
             {isAuthenticated ? (
               <>
-                <Button className="gap-2" disabled={!b.hasFile}>
-                  <Eye className="h-4 w-4" />
+                <Button className="gap-2" disabled={!b.hasFile || busy !== null} onClick={openReader}>
+                  {busy === "read" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
                   {t("public.read")}
                 </Button>
-                <Button variant="outline" className="gap-2" disabled={!b.hasFile || !b.isAvailable}>
-                  <Download className="h-4 w-4" />
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  disabled={!b.hasFile || !b.isAvailable || busy !== null}
+                  onClick={downloadPdf}
+                >
+                  {busy === "download" ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Download className="h-4 w-4" />
+                  )}
                   {t("public.download")}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  disabled={saveMutation.isPending}
+                  onClick={() => saveMutation.mutate()}
+                >
+                  {isSaved ? <BookmarkCheck className="h-4 w-4 text-primary" /> : <Bookmark className="h-4 w-4" />}
+                  {t(isSaved ? "public.saved" : "public.save")}
                 </Button>
               </>
             ) : (
               <Button asChild className="gap-2">
-                <Link to="/login">
+                <Link to="/login" state={{ from: `/library/books/${bookId}` }}>
                   <Lock className="h-4 w-4" />
                   {t("public.signInToRead")}
                 </Link>
@@ -129,6 +219,16 @@ export function PublicBookPage() {
           </div>
         </div>
       </div>
+
+      {/* Inline PDF reader (preview) */}
+      <Dialog open={readerUrl !== null} onOpenChange={(open) => !open && closeReader()}>
+        <DialogContent className="h-[88vh] max-w-5xl p-2">
+          <DialogTitle className="sr-only">{b.title}</DialogTitle>
+          {readerUrl && (
+            <iframe src={readerUrl} title={b.title} className="h-full w-full rounded-md border" />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

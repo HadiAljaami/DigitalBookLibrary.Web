@@ -15,7 +15,7 @@ import { Roles } from "@/types/auth";
 
 export function LoginPage() {
   const { t } = useTranslation();
-  const { isAuthenticated, login, logout } = useAuth();
+  const { isAuthenticated, isAdmin, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -24,10 +24,17 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Already signed in → go to where they were headed (or home).
+  const from = (location.state as { from?: string })?.from;
+
+  // Admins land on the dashboard; members land on the public library.
+  function destinationFor(admin: boolean) {
+    if (from) return from;
+    return admin ? "/" : "/library";
+  }
+
+  // Already signed in → go to where they were headed (or their home area).
   if (isAuthenticated) {
-    const to = (location.state as { from?: string })?.from ?? "/";
-    return <Navigate to={to} replace />;
+    return <Navigate to={destinationFor(isAdmin)} replace />;
   }
 
   async function onSubmit(e: React.FormEvent) {
@@ -36,14 +43,8 @@ export function LoginPage() {
     setLoading(true);
     try {
       await login(identifier.trim(), password);
-
-      // This dashboard is Admin-only; a non-admin sign-in is rejected here rather than at every route.
-      if (!tokenStorage.getUser()?.roles.includes(Roles.Admin)) {
-        await logout();
-        setError(t("auth.forbidden"));
-        return;
-      }
-      navigate((location.state as { from?: string })?.from ?? "/", { replace: true });
+      const admin = tokenStorage.getUser()?.roles.includes(Roles.Admin) ?? false;
+      navigate(destinationFor(admin), { replace: true });
     } catch (err) {
       setError(errorMessage(err));
     } finally {
