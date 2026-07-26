@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { BookOpenText, LogIn, LayoutDashboard, LogOut, Library, UserPlus } from "lucide-react";
+import { BookOpenText, LogIn, LayoutDashboard, LogOut, Library, UserPlus, PenSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -14,12 +14,14 @@ import {
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { LanguageToggle } from "@/components/layout/language-toggle";
 import { useAuth } from "@/providers/auth-provider";
+import { Roles } from "@/types/auth";
 
 /** Chrome for the public visitor site "واحة المعرفة" — distinct from the admin dashboard shell. */
 export function PublicLayout() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
+  const isAuthor = user?.roles.includes(Roles.Author) ?? false;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -98,6 +100,12 @@ export function PublicLayout() {
                     <Library className="h-4 w-4" />
                     {t("public.myLibrary")}
                   </DropdownMenuItem>
+                  {isAuthor && (
+                    <DropdownMenuItem onSelect={() => navigate("/library/my-books")}>
+                      <PenSquare className="h-4 w-4" />
+                      {t("public.myBooks")}
+                    </DropdownMenuItem>
+                  )}
                   {isAdmin && (
                     <DropdownMenuItem onSelect={() => navigate("/")}>
                       <LayoutDashboard className="h-4 w-4" />

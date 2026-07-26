@@ -52,4 +52,5 @@ export type ChangePasswordDto = {
 export const Roles = {
   Admin: "Admin",
   Member: "Member",
+  Author: "Author",
 } as const;

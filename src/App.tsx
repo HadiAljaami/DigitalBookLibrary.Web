@@ -22,6 +22,7 @@ import { PublicAuthorPage } from "@/pages/public/public-author-page";
 import { PublicCategoriesPage } from "@/pages/public/public-categories-page";
 import { PublicRegisterPage } from "@/pages/public/public-register-page";
 import { PublicLibraryPage } from "@/pages/public/public-library-page";
+import { PublicMyBooksPage } from "@/pages/public/public-my-books-page";
 import { PlaceholderPage } from "@/pages/placeholder-page";
 
 export function App() {
@@ -42,6 +43,14 @@ export function App() {
           element={
             <ProtectedRoute>
               <PublicLibraryPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="my-books"
+          element={
+            <ProtectedRoute>
+              <PublicMyBooksPage />
             </ProtectedRoute>
           }
         />

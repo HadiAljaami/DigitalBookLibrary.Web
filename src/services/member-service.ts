@@ -16,4 +16,8 @@ export const memberService = {
   readBooks: (query: PaginationParams) => api.get<PagedResult<BookListItem>>("/me/read-books", query),
   downloadedBooks: (query: PaginationParams) =>
     api.get<PagedResult<BookListItem>>("/me/downloaded-books", query),
+
+  /** Books the current (author) user has uploaded, including their hidden ones. */
+  publishedBooks: (query: PaginationParams) =>
+    api.get<PagedResult<BookListItem>>("/me/published-books", query),
 };
