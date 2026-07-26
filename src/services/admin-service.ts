@@ -8,6 +8,7 @@ import {
   type CreateUserDto,
   type SaveUserDto,
 } from "@/types/admin";
+import { type AuthorRequest, type AuthorRequestQuery } from "@/types/author-request";
 
 export const adminService = {
   users: (query: AdminUserQuery) => api.get<PagedResult<AdminUser>>("/admin/users", query),
@@ -28,4 +29,10 @@ export const adminService = {
   deleteUser: (id: number) => api.delete<null>(`/admin/users/${id}`),
 
   audit: (query: AuditQuery) => api.get<PagedResult<AuditLog>>("/admin/users/audit", query),
+
+  authorRequests: (query: AuthorRequestQuery) =>
+    api.get<PagedResult<AuthorRequest>>("/admin/author-requests", query),
+  approveAuthorRequest: (id: number) => api.post<null>(`/admin/author-requests/${id}/approve`),
+  rejectAuthorRequest: (id: number, note: string | null) =>
+    api.post<null>(`/admin/author-requests/${id}/reject`, { note }),
 };

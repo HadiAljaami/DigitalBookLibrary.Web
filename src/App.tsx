@@ -5,6 +5,7 @@ import { AdminRoute } from "@/components/auth/admin-route";
 import { LoginPage } from "@/pages/login-page";
 import { DashboardPage } from "@/pages/dashboard-page";
 import { UsersPage } from "@/pages/users-page";
+import { AuthorRequestsPage } from "@/pages/author-requests-page";
 import { AuditPage } from "@/pages/audit-page";
 import { BooksPage } from "@/pages/books-page";
 import { AuthorsPage } from "@/pages/authors-page";
@@ -71,6 +72,7 @@ export function App() {
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="publishers" element={<PublishersPage />} />
         <Route path="users" element={<UsersPage />} />
+        <Route path="author-requests" element={<AuthorRequestsPage />} />
         <Route path="reports/overview" element={<ReportsOverviewPage />} />
         <Route path="reports/books" element={<ReportsBooksPage />} />
         <Route path="reports/users" element={<ReportsUsersPage />} />

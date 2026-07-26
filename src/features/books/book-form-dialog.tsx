@@ -61,12 +61,15 @@ type Props = {
   onOpenChange: (open: boolean) => void;
   /** undefined → create; a number → edit that book. */
   bookId?: number;
+  /** When set (author self-publishing), the authors field is locked to this author id. */
+  restrictAuthorId?: number;
 };
 
-export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
+export function BookFormDialog({ open, onOpenChange, bookId, restrictAuthorId }: Props) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const isEdit = bookId != null;
+  const authorLocked = restrictAuthorId != null;
   const { name: localName } = useLocalName();
   const languages = useLanguages();
 
@@ -143,7 +146,11 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
     } else if (!isEdit) {
       reset(EMPTY);
     }
-  }, [open, isEdit, bookDetail.data, reset]);
+    // Author self-publishing: the authors are always just themselves.
+    if (authorLocked) {
+      setValue("authorIds", [restrictAuthorId!]);
+    }
+  }, [open, isEdit, bookDetail.data, reset, authorLocked, restrictAuthorId, setValue]);
 
   const mutation = useMutation({
     mutationFn: async (values: FormValues) => {
@@ -190,7 +197,14 @@ export function BookFormDialog({ open, onOpenChange, bookId }: Props) {
           </Field>
 
           <Field label={t("nav.authors")} error={errors.authorIds && t("common.required")}>
-            {(() => {
+            {authorLocked ? (
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary">
+                  {authors.data?.items.find((a) => a.id === restrictAuthorId)?.fullName ?? t("books.you")}
+                </Badge>
+                <span className="text-xs text-muted-foreground">{t("books.publishAsYouHint")}</span>
+              </div>
+            ) : (() => {
               const selectedIds = watch("authorIds");
               const all = authors.data?.items ?? [];
               const available = all.filter((a) => !selectedIds.includes(a.id));

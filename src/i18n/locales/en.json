@@ -99,6 +99,29 @@
     "registeredAuthor": "Registered author",
     "authorBooks": "Books by this author"
   },
+  "becomeAuthor": {
+    "title": "Become an author",
+    "subtitle": "Request author access to publish your own books.",
+    "notePlaceholder": "Tell the admin why you'd like to become an author (optional)",
+    "submit": "Send request",
+    "submitted": "Your request was sent",
+    "pending": "Your author request is under review",
+    "pendingHint": "An admin will review it soon.",
+    "rejected": "Your previous request was declined",
+    "youAreAuthor": "You are an author"
+  },
+  "authorRequests": {
+    "subtitle": "Members asking to become authors",
+    "note": "Message",
+    "approve": "Approve",
+    "reject": "Reject",
+    "rejectReason": "Reason for rejection (optional):",
+    "approved": "Request approved",
+    "rejected": "Request rejected",
+    "status_Pending": "Pending",
+    "status_Approved": "Approved",
+    "status_Rejected": "Rejected"
+  },
   "feedback": {
     "ratingTitle": "Rating",
     "outOfFive": "out of 5",
@@ -167,6 +190,8 @@
     "description": "Description",
     "pages": "Pages",
     "addAuthor": "Add an author...",
+    "you": "You",
+    "publishAsYouHint": "Published under your name",
     "publisher": "Publisher",
     "cover": "Cover image",
     "pdf": "PDF file",
@@ -179,6 +204,7 @@
     "categories": "Categories",
     "publishers": "Publishers",
     "users": "Users",
+    "authorRequests": "Author requests",
     "audit": "Audit Log",
     "settings": "Settings",
     "reports": "Reports",

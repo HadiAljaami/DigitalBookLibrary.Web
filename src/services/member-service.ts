@@ -1,6 +1,7 @@
 import { api } from "@/lib/api-client";
 import { type PagedResult, type PaginationParams } from "@/types/api";
 import { type BookListItem } from "@/types/catalog";
+import { type AuthorRequest } from "@/types/author-request";
 
 /** Member self-service against a book: reading, downloading and saving. */
 export const memberService = {
@@ -20,4 +21,9 @@ export const memberService = {
   /** Books the current (author) user has uploaded, including their hidden ones. */
   publishedBooks: (query: PaginationParams) =>
     api.get<PagedResult<BookListItem>>("/me/published-books", query),
+
+  /** The caller's "become an author" request status (null if never asked). */
+  authorRequest: () => api.get<AuthorRequest | null>("/me/author-request"),
+  submitAuthorRequest: (note: string | null) =>
+    api.post<AuthorRequest>("/me/author-request", { note }),
 };

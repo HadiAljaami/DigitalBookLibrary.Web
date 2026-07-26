@@ -99,6 +99,29 @@
     "registeredAuthor": "مؤلف مسجّل",
     "authorBooks": "كتب هذا المؤلف"
   },
+  "becomeAuthor": {
+    "title": "كن مؤلفاً",
+    "subtitle": "اطلب صلاحية المؤلف لتنشر كتبك الخاصة.",
+    "notePlaceholder": "أخبر المدير لماذا تريد أن تصبح مؤلفاً (اختياري)",
+    "submit": "إرسال الطلب",
+    "submitted": "تم إرسال طلبك",
+    "pending": "طلب المؤلف قيد المراجعة",
+    "pendingHint": "سيراجعه المدير قريباً.",
+    "rejected": "طلبك السابق قد رُفض",
+    "youAreAuthor": "أنت مؤلف"
+  },
+  "authorRequests": {
+    "subtitle": "الأعضاء الراغبون في أن يصبحوا مؤلفين",
+    "note": "الرسالة",
+    "approve": "موافقة",
+    "reject": "رفض",
+    "rejectReason": "سبب الرفض (اختياري):",
+    "approved": "تمت الموافقة على الطلب",
+    "rejected": "تم رفض الطلب",
+    "status_Pending": "قيد المراجعة",
+    "status_Approved": "مقبول",
+    "status_Rejected": "مرفوض"
+  },
   "feedback": {
     "ratingTitle": "التقييم",
     "outOfFive": "من ٥",
@@ -167,6 +190,8 @@
     "description": "الوصف",
     "pages": "الصفحات",
     "addAuthor": "أضف مؤلفاً...",
+    "you": "أنت",
+    "publishAsYouHint": "يُنشر باسمك",
     "publisher": "الناشر",
     "cover": "صورة الغلاف",
     "pdf": "ملف PDF",
@@ -179,6 +204,7 @@
     "categories": "التصنيفات",
     "publishers": "دور النشر",
     "users": "المستخدمون",
+    "authorRequests": "طلبات المؤلفين",
     "audit": "سجل التدقيق",
     "settings": "الإعدادات",
     "reports": "التقارير",

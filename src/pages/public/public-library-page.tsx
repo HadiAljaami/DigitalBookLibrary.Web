@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { BookOpen, Eye, Download, Bookmark } from "lucide-react";
 import { memberService } from "@/services/member-service";
+import { BecomeAuthorCard } from "@/features/account/become-author-card";
 import { type BookListItem } from "@/types/catalog";
 
 type Tab = "read" | "downloaded" | "saved";
@@ -37,6 +38,8 @@ export function PublicLibraryPage() {
         <h1 className="text-2xl font-bold">{t("public.myLibrary")}</h1>
         <p className="text-muted-foreground">{t("public.myLibrarySubtitle")}</p>
       </div>
+
+      <BecomeAuthorCard />
 
       <div className="inline-flex rounded-lg border bg-muted/40 p-1">
         {tabs.map((tb) => {

@@ -8,6 +8,7 @@ import {
   Settings,
   BarChart3,
   Building2,
+  UserPlus,
   type LucideIcon,
 } from "lucide-react";
 
@@ -53,6 +54,7 @@ export const navigation: NavSection[] = [
     titleKey: "nav.administration",
     items: [
       { labelKey: "users", to: "/users", icon: Users },
+      { labelKey: "authorRequests", to: "/author-requests", icon: UserPlus },
       {
         labelKey: "reports",
         icon: BarChart3,

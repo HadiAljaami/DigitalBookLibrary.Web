@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { BookFormDialog } from "@/features/books/book-form-dialog";
 import { memberService } from "@/services/member-service";
 import { catalogService } from "@/services/catalog-service";
+import { accountService } from "@/services/account-service";
 import { toast } from "@/lib/toast-store";
 import { errorMessage } from "@/lib/error-message";
 
@@ -21,6 +22,9 @@ export function PublicMyBooksPage() {
     queryKey: ["books", "me-published"],
     queryFn: () => memberService.publishedBooks({ pageNumber: 1, pageSize: 50 }),
   });
+
+  // The author's own id locks the publish form to their name.
+  const profile = useQuery({ queryKey: ["me", "profile"], queryFn: () => accountService.profile() });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => catalogService.deleteBook(id),
@@ -98,6 +102,7 @@ export function PublicMyBooksPage() {
         open={formBookId !== undefined}
         onOpenChange={(open) => !open && setFormBookId(undefined)}
         bookId={formBookId ?? undefined}
+        restrictAuthorId={profile.data?.authorId ?? undefined}
       />
     </div>
   );

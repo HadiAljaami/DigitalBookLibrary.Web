@@ -30,6 +30,8 @@ export type UserProfile = {
   nationalityCountryId: number | null;
   cityId: number | null;
   imageUrl: string | null;
+  /** The account's own author id when they are an author, else null. */
+  authorId: number | null;
   isActive: boolean;
   roles: string[];
 };
