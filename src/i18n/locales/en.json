@@ -188,6 +188,8 @@
     "imageUrl": "Image URL",
     "visible": "Visible",
     "hasAccount": "Has account",
+    "createAccount": "Create a login account for this author",
+    "hasAccountNote": "This author already has a login account.",
     "confirmDelete": "Delete the author \"{{name}}\"?"
   },
   "categories": {

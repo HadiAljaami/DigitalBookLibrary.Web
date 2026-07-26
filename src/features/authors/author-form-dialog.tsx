@@ -40,6 +40,11 @@ const schema = z.object({
   residenceCountryId: z.string(),
   cityId: z.string(),
   isVisible: z.boolean(),
+  // Optional login account for the author.
+  createAccount: z.boolean(),
+  accUsername: z.string(),
+  accEmail: z.string(),
+  accPassword: z.string(),
 });
 type FormValues = z.infer<typeof schema>;
 
@@ -51,6 +56,10 @@ const EMPTY: FormValues = {
   residenceCountryId: "",
   cityId: "",
   isVisible: true,
+  createAccount: false,
+  accUsername: "",
+  accEmail: "",
+  accPassword: "",
 };
 
 type Props = {
@@ -97,6 +106,10 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
         residenceCountryId: a.countryId != null ? String(a.countryId) : "",
         cityId: a.cityId != null ? String(a.cityId) : "",
         isVisible: a.isVisible,
+        createAccount: false,
+        accUsername: "",
+        accEmail: "",
+        accPassword: "",
       });
     } else if (!isEdit) {
       reset(EMPTY);
@@ -120,6 +133,15 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
       // The photo is uploaded to the saved author's id, after its record exists.
       const image = imageRef.current?.files?.[0];
       if (image) await catalogService.uploadAuthorImage(saved.id, image);
+
+      // Optionally give the author a login account (only when they don't already have one).
+      if (values.createAccount && !detail.data?.hasAccount) {
+        await catalogService.createAuthorAccount(saved.id, {
+          username: values.accUsername.trim(),
+          email: values.accEmail.trim(),
+          password: values.accPassword,
+        });
+      }
     },
     onSuccess: () => {
       toast.success(t("common.saved"));
@@ -230,6 +252,36 @@ export function AuthorFormDialog({ open, onOpenChange, authorId }: Props) {
           <div className="flex items-center gap-3">
             <Switch checked={watch("isVisible")} onCheckedChange={(v) => setValue("isVisible", v)} />
             <Label>{t("authors.visible")}</Label>
+          </div>
+
+          {/* Login account — an author with an account can sign in and upload their own books. */}
+          <div className="rounded-lg border p-3">
+            {detail.data?.hasAccount ? (
+              <p className="text-sm text-muted-foreground">{t("authors.hasAccountNote")}</p>
+            ) : (
+              <>
+                <div className="flex items-center gap-3">
+                  <Switch
+                    checked={watch("createAccount")}
+                    onCheckedChange={(v) => setValue("createAccount", v)}
+                  />
+                  <Label>{t("authors.createAccount")}</Label>
+                </div>
+                {watch("createAccount") && (
+                  <div className="mt-3 grid gap-3 sm:grid-cols-3">
+                    <Field label={t("users.username")}>
+                      <Input {...register("accUsername")} autoComplete="off" />
+                    </Field>
+                    <Field label={t("common.email")}>
+                      <Input dir="ltr" type="email" {...register("accEmail")} autoComplete="off" />
+                    </Field>
+                    <Field label={t("auth.password")}>
+                      <Input type="password" {...register("accPassword")} autoComplete="new-password" />
+                    </Field>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
           <DialogFooter>

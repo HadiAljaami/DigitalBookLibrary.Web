@@ -188,6 +188,8 @@
     "imageUrl": "رابط الصورة",
     "visible": "ظاهر",
     "hasAccount": "له حساب",
+    "createAccount": "إنشاء حساب دخول لهذا المؤلف",
+    "hasAccountNote": "هذا المؤلف لديه حساب دخول بالفعل.",
     "confirmDelete": "حذف المؤلف \"{{name}}\"؟"
   },
   "categories": {
