@@ -17,6 +17,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ZoomableImage } from "@/components/ui/zoomable-image";
+import { BookRating } from "@/components/public/book-rating";
+import { BookComments } from "@/components/public/book-comments";
 import { catalogService } from "@/services/catalog-service";
 import { memberService } from "@/services/member-service";
 import { useLanguages, useLocalName, findById } from "@/hooks/use-lookups";
@@ -217,6 +219,14 @@ export function PublicBookPage() {
               </Button>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Ratings + comments */}
+      <div className="grid gap-6 md:grid-cols-[280px_1fr]">
+        <BookRating bookId={bookId} />
+        <div className="md:col-start-2">
+          <BookComments bookId={bookId} />
         </div>
       </div>
 

@@ -99,6 +99,23 @@
     "registeredAuthor": "مؤلف مسجّل",
     "authorBooks": "كتب هذا المؤلف"
   },
+  "feedback": {
+    "ratingTitle": "التقييم",
+    "outOfFive": "من ٥",
+    "ratingsCount": "{{count}} تقييم",
+    "rated": "شكراً لتقييمك",
+    "clearRating": "إزالة تقييمي",
+    "signInToRate": "لتقييم هذا الكتاب",
+    "commentsTitle": "التعليقات",
+    "commentPlaceholder": "شاركنا رأيك...",
+    "postComment": "أضف تعليقاً",
+    "commentPosted": "تم نشر التعليق",
+    "signInToComment": "للمشاركة في النقاش",
+    "noComments": "لا توجد تعليقات بعد — كن أول المعلّقين",
+    "reply": "رد",
+    "replyPlaceholder": "اكتب رداً...",
+    "confirmDeleteComment": "حذف هذا التعليق؟"
+  },
   "settings": {
     "subtitle": "ملفك الشخصي وكلمة المرور والتفضيلات",
     "profile": "الملف الشخصي",

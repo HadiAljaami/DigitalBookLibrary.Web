@@ -99,6 +99,23 @@
     "registeredAuthor": "Registered author",
     "authorBooks": "Books by this author"
   },
+  "feedback": {
+    "ratingTitle": "Rating",
+    "outOfFive": "out of 5",
+    "ratingsCount": "{{count}} ratings",
+    "rated": "Thanks for rating",
+    "clearRating": "Clear my rating",
+    "signInToRate": "to rate this book",
+    "commentsTitle": "Comments",
+    "commentPlaceholder": "Share your thoughts...",
+    "postComment": "Post comment",
+    "commentPosted": "Comment posted",
+    "signInToComment": "to join the discussion",
+    "noComments": "No comments yet — be the first",
+    "reply": "Reply",
+    "replyPlaceholder": "Write a reply...",
+    "confirmDeleteComment": "Delete this comment?"
+  },
   "settings": {
     "subtitle": "Your profile, password and preferences",
     "profile": "Profile",
