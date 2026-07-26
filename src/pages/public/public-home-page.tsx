@@ -15,7 +15,7 @@ import {
 import { CategorySelect } from "@/components/catalog/category-select";
 import { catalogService } from "@/services/catalog-service";
 import { useLanguages, useLocalName } from "@/hooks/use-lookups";
-import { type BookQuery } from "@/types/catalog";
+import { type BookListItem, type BookQuery } from "@/types/catalog";
 
 const ALL = "all";
 const PAGE_SIZE = 12;
@@ -31,6 +31,7 @@ export function PublicHomePage() {
   const [categoryId, setCategoryId] = useState(searchParams.get("category") ?? ALL);
   const [languageId, setLanguageId] = useState(ALL);
   const [page, setPage] = useState(1);
+  const [videoOk, setVideoOk] = useState(true);
 
   // Debounce the search box so typing doesn't fire a request per keystroke.
   function onSearchChange(value: string) {
@@ -69,19 +70,35 @@ export function PublicHomePage() {
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
   const items = books.data?.items ?? [];
 
+  // Showcase rows appear only on the plain landing view (no search or filter).
+  const isDefault = !debounced && categoryId === ALL && languageId === ALL;
+  const showcase = (sortBy: string) =>
+    useQuery({
+      queryKey: ["showcase", sortBy],
+      queryFn: () => catalogService.books({ pageNumber: 1, pageSize: 10, sortBy, desc: true }),
+      enabled: isDefault,
+    });
+  const newest = showcase("date");
+  const topDownloads = showcase("downloads");
+  const topReads = showcase("reads");
+
   return (
     <div className="space-y-8">
-      {/* Hero with a looping background video and a readable overlay. */}
-      <section className="relative overflow-hidden rounded-2xl border">
-        <video
-          className="absolute inset-0 h-full w-full object-cover"
-          src="/hero.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          aria-hidden
-        />
+      {/* Hero: a looping background video over a gradient that also serves as the fallback. */}
+      <section className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary via-primary/70 to-primary/40">
+        {videoOk && (
+          <video
+            className="absolute inset-0 h-full w-full object-cover"
+            src="/hero.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            aria-hidden
+            onError={() => setVideoOk(false)}
+          />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/55 to-black/40" />
         <div className="relative px-6 py-14 text-center sm:px-10 sm:py-20">
           <h1 className="text-3xl font-bold tracking-tight text-white drop-shadow sm:text-5xl">
@@ -124,7 +141,17 @@ export function PublicHomePage() {
         <span className="text-sm text-muted-foreground">{t("public.results", { count: total })}</span>
       </div>
 
+      {/* Showcase rows on the plain landing view */}
+      {isDefault && (
+        <div className="space-y-8">
+          <Showcase title={t("public.newest")} books={newest.data?.items ?? []} />
+          <Showcase title={t("public.mostDownloaded")} books={topDownloads.data?.items ?? []} />
+          <Showcase title={t("public.mostRead")} books={topReads.data?.items ?? []} />
+        </div>
+      )}
+
       {/* Grid */}
+      {isDefault && <h2 className="text-lg font-semibold">{t("public.allBooks")}</h2>}
       {items.length === 0 ? (
         <p className="py-16 text-center text-muted-foreground">
           {books.isLoading ? t("common.loading") : t("common.noData")}
@@ -132,29 +159,7 @@ export function PublicHomePage() {
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
           {items.map((b) => (
-            <Link
-              key={b.id}
-              to={`/library/books/${b.id}`}
-              className="group flex flex-col overflow-hidden rounded-xl border bg-card transition hover:shadow-md"
-            >
-              <div className="flex aspect-[3/4] items-center justify-center overflow-hidden bg-muted">
-                {b.imageUrl ? (
-                  <img
-                    src={b.imageUrl}
-                    alt={b.title}
-                    className="h-full w-full object-cover transition group-hover:scale-105"
-                  />
-                ) : (
-                  <BookOpen className="h-10 w-10 text-muted-foreground" />
-                )}
-              </div>
-              <div className="flex flex-1 flex-col p-3">
-                <p className="line-clamp-2 font-medium leading-snug">{b.title}</p>
-                <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
-                  {b.authors.length ? b.authors.map((a) => a.name).join("، ") : "—"}
-                </p>
-              </div>
-            </Link>
+            <BookCard key={b.id} b={b} />
           ))}
         </div>
       )}
@@ -172,5 +177,50 @@ export function PublicHomePage() {
         </div>
       )}
     </div>
+  );
+}
+
+/** A single book cover card linking to the book's detail page. */
+function BookCard({ b }: { b: BookListItem }) {
+  return (
+    <Link
+      to={`/library/books/${b.id}`}
+      className="group flex flex-col overflow-hidden rounded-xl border bg-card transition hover:shadow-md"
+    >
+      <div className="flex aspect-[3/4] items-center justify-center overflow-hidden bg-muted">
+        {b.imageUrl ? (
+          <img
+            src={b.imageUrl}
+            alt={b.title}
+            className="h-full w-full object-cover transition group-hover:scale-105"
+          />
+        ) : (
+          <BookOpen className="h-10 w-10 text-muted-foreground" />
+        )}
+      </div>
+      <div className="flex flex-1 flex-col p-3">
+        <p className="line-clamp-2 font-medium leading-snug">{b.title}</p>
+        <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">
+          {b.authors.length ? b.authors.map((a) => a.name).join("، ") : "—"}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+/** A titled, horizontally scrollable row of books (a home-page showcase). */
+function Showcase({ title, books }: { title: string; books: BookListItem[] }) {
+  if (books.length === 0) return null;
+  return (
+    <section>
+      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
+      <div className="flex gap-4 overflow-x-auto pb-2">
+        {books.map((b) => (
+          <div key={b.id} className="w-36 shrink-0 sm:w-40">
+            <BookCard b={b} />
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
