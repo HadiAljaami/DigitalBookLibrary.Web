@@ -16,6 +16,9 @@ import { CategorySelect } from "@/components/catalog/category-select";
 import { catalogService } from "@/services/catalog-service";
 import { useLanguages, useLocalName } from "@/hooks/use-lookups";
 import { type BookListItem, type BookQuery } from "@/types/catalog";
+// Imported (not from /public) so the bundler fingerprints it → the host serves it with a long,
+// immutable cache and the browser reuses it across refreshes instead of re-downloading.
+import heroVideo from "@/assets/hero.mp4";
 
 const ALL = "all";
 const PAGE_SIZE = 12;
@@ -89,7 +92,7 @@ export function PublicHomePage() {
         {videoOk && (
           <video
             className="absolute inset-0 h-full w-full object-cover"
-            src="/hero.mp4"
+            src={heroVideo}
             autoPlay
             muted
             loop
