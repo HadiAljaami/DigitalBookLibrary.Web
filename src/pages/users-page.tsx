@@ -36,7 +36,7 @@ import { formatDate } from "@/lib/format";
 import { Roles } from "@/types/auth";
 import { type AdminUser } from "@/types/admin";
 
-const ALL_ROLES = [Roles.Admin, Roles.Member];
+const ALL_ROLES = [Roles.Admin, Roles.Member, Roles.Author];
 
 export function UsersPage() {
   const { t } = useTranslation();

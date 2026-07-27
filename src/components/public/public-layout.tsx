@@ -1,8 +1,8 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { BookOpenText, LogIn, LayoutDashboard, LogOut, Library, UserPlus, PenSquare } from "lucide-react";
+import { BookOpenText, LogIn, LayoutDashboard, LogOut, Library, UserPlus, PenSquare, UserCog } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -85,6 +85,7 @@ export function PublicLayout() {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="gap-2 px-2">
                     <Avatar className="h-8 w-8">
+                      {user && <AvatarImage src={`/api/users/${user.id}/avatar`} alt="" />}
                       <AvatarFallback>{(user?.username ?? "?").slice(0, 2).toUpperCase()}</AvatarFallback>
                     </Avatar>
                     <span className="hidden text-sm font-medium sm:inline">{user?.username}</span>
@@ -106,6 +107,10 @@ export function PublicLayout() {
                       {t("public.myBooks")}
                     </DropdownMenuItem>
                   )}
+                  <DropdownMenuItem onSelect={() => navigate("/library/account")}>
+                    <UserCog className="h-4 w-4" />
+                    {t("public.myAccount")}
+                  </DropdownMenuItem>
                   {isAdmin && (
                     <DropdownMenuItem onSelect={() => navigate("/")}>
                       <LayoutDashboard className="h-4 w-4" />

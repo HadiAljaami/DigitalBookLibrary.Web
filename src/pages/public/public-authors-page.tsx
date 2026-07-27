@@ -1,14 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { Search, User } from "lucide-react";
+import { useInfiniteQuery, keepPreviousData } from "@tanstack/react-query";
+import { Search, User, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { catalogService } from "@/services/catalog-service";
 import { useCountries, useLocalName, findById } from "@/hooks/use-lookups";
-import { type AuthorQuery } from "@/types/catalog";
 
 const PAGE_SIZE = 18;
 
@@ -19,30 +18,30 @@ export function PublicAuthorsPage() {
 
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
-  const [page, setPage] = useState(1);
 
   function onSearchChange(value: string) {
     setSearch(value);
-    setPage(1);
     window.clearTimeout((onSearchChange as unknown as { _t?: number })._t);
     (onSearchChange as unknown as { _t?: number })._t = window.setTimeout(() => setDebounced(value), 350);
   }
 
-  const query: AuthorQuery = {
-    pageNumber: page,
-    pageSize: PAGE_SIZE,
-    search: debounced || undefined,
-  };
-
-  const authors = useQuery({
-    queryKey: ["public-authors", query],
-    queryFn: () => catalogService.authors(query),
+  // Most-influential authors first (by total downloads + reads of their books); "load more" appends.
+  const authors = useInfiniteQuery({
+    queryKey: ["public-authors", debounced],
+    queryFn: ({ pageParam }) =>
+      catalogService.authors({
+        pageNumber: pageParam,
+        pageSize: PAGE_SIZE,
+        search: debounced || undefined,
+        sortBy: "popularity",
+        desc: true,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.hasNext ? last.pageNumber + 1 : undefined),
     placeholderData: keepPreviousData,
   });
 
-  const items = authors.data?.items ?? [];
-  const total = authors.data?.totalCount ?? 0;
-  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+  const items = authors.data?.pages.flatMap((p) => p.items) ?? [];
 
   return (
     <div className="space-y-6">
@@ -91,14 +90,11 @@ export function PublicAuthorsPage() {
         </div>
       )}
 
-      {totalPages > 1 && (
-        <div className="flex items-center justify-center gap-3">
-          <Button variant="outline" size="sm" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>
-            {t("table.previous")}
-          </Button>
-          <span className="text-sm text-muted-foreground">{t("table.page")} {page} / {totalPages}</span>
-          <Button variant="outline" size="sm" disabled={page >= totalPages} onClick={() => setPage((p) => p + 1)}>
-            {t("table.next")}
+      {authors.hasNextPage && (
+        <div className="flex justify-center pt-2">
+          <Button variant="outline" onClick={() => authors.fetchNextPage()} disabled={authors.isFetchingNextPage}>
+            {authors.isFetchingNextPage && <Loader2 className="h-4 w-4 animate-spin" />}
+            {t("common.loadMore")}
           </Button>
         </div>
       )}

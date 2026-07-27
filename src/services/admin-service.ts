@@ -2,6 +2,7 @@ import { api } from "@/lib/api-client";
 import { type PagedResult } from "@/types/api";
 import {
   type AdminUser,
+  type AdminUserDetail,
   type AdminUserQuery,
   type AuditLog,
   type AuditQuery,
@@ -13,6 +14,8 @@ import { type AuthorRequest, type AuthorRequestQuery } from "@/types/author-requ
 export const adminService = {
   users: (query: AdminUserQuery) => api.get<PagedResult<AdminUser>>("/admin/users", query),
 
+  user: (id: number) => api.get<AdminUserDetail>(`/admin/users/${id}`),
+
   setUserActive: (id: number, isActive: boolean) =>
     api.patch<AdminUser>(`/admin/users/${id}/active`, { isActive }),
 
@@ -22,6 +25,9 @@ export const adminService = {
   createUser: (body: CreateUserDto) => api.post<AdminUser>("/admin/users", body),
 
   updateUser: (id: number, body: SaveUserDto) => api.put<AdminUser>(`/admin/users/${id}`, body),
+
+  uploadUserAvatar: (id: number, file: File) =>
+    api.upload<{ imageUrl: string }>(`/admin/users/${id}/avatar`, file),
 
   resetUserPassword: (id: number, newPassword: string) =>
     api.put<null>(`/admin/users/${id}/password`, { newPassword }),

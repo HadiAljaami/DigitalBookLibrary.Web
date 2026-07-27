@@ -35,6 +35,26 @@ export function PublicMyBooksPage() {
     onError: (err) => toast.error(errorMessage(err)),
   });
 
+  const visibilityMutation = useMutation({
+    mutationFn: ({ id, value }: { id: number; value: boolean }) =>
+      catalogService.setBookVisibility(id, value),
+    onSuccess: () => {
+      toast.success(t("common.saved"));
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+    },
+    onError: (err) => toast.error(errorMessage(err)),
+  });
+
+  const availabilityMutation = useMutation({
+    mutationFn: ({ id, value }: { id: number; value: boolean }) =>
+      catalogService.setBookAvailability(id, value),
+    onSuccess: () => {
+      toast.success(t("common.saved"));
+      queryClient.invalidateQueries({ queryKey: ["books"] });
+    },
+    onError: (err) => toast.error(errorMessage(err)),
+  });
+
   const items = books.data?.items ?? [];
 
   return (
@@ -70,12 +90,26 @@ export function PublicMyBooksPage() {
                   {b.title}
                 </Link>
                 <div className="mt-1 flex flex-wrap gap-1.5">
-                  <Badge variant={b.isVisible ? "success" : "secondary"}>
-                    {t(b.isVisible ? "books.visible" : "books.hidden")}
-                  </Badge>
-                  <Badge variant={b.isAvailable ? "default" : "warning"}>
-                    {t(b.isAvailable ? "books.available" : "books.unavailable")}
-                  </Badge>
+                  <button
+                    type="button"
+                    title={t("books.toggleVisibility")}
+                    disabled={visibilityMutation.isPending}
+                    onClick={() => visibilityMutation.mutate({ id: b.id, value: !b.isVisible })}
+                  >
+                    <Badge variant={b.isVisible ? "success" : "secondary"} className="cursor-pointer">
+                      {t(b.isVisible ? "books.visible" : "books.hidden")}
+                    </Badge>
+                  </button>
+                  <button
+                    type="button"
+                    title={t("books.toggleAvailability")}
+                    disabled={availabilityMutation.isPending}
+                    onClick={() => availabilityMutation.mutate({ id: b.id, value: !b.isAvailable })}
+                  >
+                    <Badge variant={b.isAvailable ? "default" : "warning"} className="cursor-pointer">
+                      {t(b.isAvailable ? "books.available" : "books.unavailable")}
+                    </Badge>
+                  </button>
                 </div>
               </div>
               <div className="flex gap-1">

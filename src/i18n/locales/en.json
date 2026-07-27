@@ -11,6 +11,7 @@
     "confirm": "Confirm",
     "close": "Close",
     "loading": "Loading...",
+    "loadMore": "Load more",
     "noData": "No data",
     "error": "An error occurred",
     "retry": "Retry",
@@ -63,6 +64,7 @@
     "resetPassword": "Reset password",
     "resetPasswordFor": "Reset password for \"{{name}}\"",
     "passwordReset": "Password reset",
+    "rolesEditHint": "Change roles from the row menu (⋯) in the users table.",
     "confirmDelete": "Delete the user \"{{name}}\"? Their books return to the library."
   },
   "public": {
@@ -82,6 +84,9 @@
     "backToLibrary": "Back to the library",
     "backToAuthors": "Back to authors",
     "read": "Read now",
+    "markRead": "Mark as read",
+    "readDone": "Read",
+    "markedRead": "Marked as read",
     "download": "Download",
     "save": "Save",
     "saved": "Saved",
@@ -91,6 +96,7 @@
     "myLibrarySubtitle": "Your saved, read and downloaded books",
     "myBooks": "My books",
     "myBooksSubtitle": "Books you have published",
+    "myAccount": "My account",
     "publishBook": "Publish a book",
     "noPublished": "You haven't published any books yet",
     "tabSaved": "Saved",
@@ -141,6 +147,8 @@
     "noComments": "No comments yet — be the first",
     "reply": "Reply",
     "replyPlaceholder": "Write a reply...",
+    "showReplies": "Show {{count}} replies",
+    "hideReplies": "Hide replies",
     "confirmDeleteComment": "Delete this comment?"
   },
   "settings": {
@@ -153,7 +161,8 @@
     "confirmPassword": "Confirm new password",
     "passwordChanged": "Password changed",
     "passwordTooShort": "At least 6 characters",
-    "passwordMismatch": "Passwords do not match"
+    "passwordMismatch": "Passwords do not match",
+    "forgotPasswordHint": "Forgot your current password? Ask an administrator to reset it for you."
   },
   "audit": {
     "subtitle": "A complete log of every change in the system",
@@ -181,6 +190,8 @@
     "hidden": "Hidden",
     "available": "Available",
     "unavailable": "Unavailable",
+    "toggleVisibility": "Click to show/hide in the public library",
+    "toggleAvailability": "Click to allow/block downloads",
     "hide": "Hide",
     "show": "Show",
     "makeAvailable": "Make available",
@@ -239,6 +250,11 @@
     "imageUrl": "Image URL",
     "visible": "Visible",
     "hasAccount": "Has account",
+    "account": "Account",
+    "accountNone": "No account",
+    "accountActive": "Active author",
+    "accountRevoked": "Revoked",
+    "accountRevokedHint": "Has an account but the Author role was revoked. Re-grant the Author role from the Users section to let them publish again.",
     "createAccount": "Create a login account for this author",
     "hasAccountNote": "This author already has a login account.",
     "confirmDelete": "Delete the author \"{{name}}\"?"

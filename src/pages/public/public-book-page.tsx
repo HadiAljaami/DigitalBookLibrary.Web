@@ -11,6 +11,7 @@ import {
   Lock,
   Bookmark,
   BookmarkCheck,
+  CheckCircle2,
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,25 @@ export function PublicBookPage() {
       toast.success(isSaved ? t("public.removed") : t("public.saved"));
       queryClient.invalidateQueries({ queryKey: ["me-saved-ids"] });
       queryClient.invalidateQueries({ queryKey: ["me-library"] });
+    },
+    onError: (err) => toast.error(errorMessage(err)),
+  });
+
+  // Reading is recorded only when the member explicitly marks it read (opening the PDF doesn't count).
+  const readStatus = useQuery({
+    queryKey: ["me-read-status", bookId],
+    queryFn: () => memberService.readStatus(bookId),
+    enabled: isAuthenticated && Number.isFinite(bookId),
+  });
+  const isRead = readStatus.data?.isRead ?? false;
+
+  const markReadMutation = useMutation({
+    mutationFn: () => memberService.markRead(bookId),
+    onSuccess: () => {
+      toast.success(t("public.markedRead"));
+      queryClient.invalidateQueries({ queryKey: ["me-read-status", bookId] });
+      queryClient.invalidateQueries({ queryKey: ["me-library"] });
+      queryClient.invalidateQueries({ queryKey: ["public-book", bookId] });
     },
     onError: (err) => toast.error(errorMessage(err)),
   });
@@ -186,6 +206,19 @@ export function PublicBookPage() {
                 <Button className="gap-2" disabled={!b.hasFile || busy !== null} onClick={openReader}>
                   {busy === "read" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
                   {t("public.read")}
+                </Button>
+                <Button
+                  variant={isRead ? "secondary" : "outline"}
+                  className="gap-2"
+                  disabled={!b.hasFile || isRead || markReadMutation.isPending}
+                  onClick={() => markReadMutation.mutate()}
+                >
+                  {markReadMutation.isPending ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className={"h-4 w-4" + (isRead ? " text-success" : "")} />
+                  )}
+                  {t(isRead ? "public.readDone" : "public.markRead")}
                 </Button>
                 <Button
                   variant="outline"

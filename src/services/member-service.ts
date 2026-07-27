@@ -5,10 +5,15 @@ import { type AuthorRequest } from "@/types/author-request";
 
 /** Member self-service against a book: reading, downloading and saving. */
 export const memberService = {
-  /** The PDF streamed inline (logs the read + bumps the counter). */
+  /** The PDF streamed inline for viewing. Opening is NOT counted — the read is recorded by markRead. */
   readBook: (id: number) => api.blob(`/books/${id}/read`),
   /** The PDF as a download (logs the download + bumps the counter). */
   downloadBook: (id: number) => api.blob(`/books/${id}/download`),
+
+  /** Whether the caller has already marked this book as read. */
+  readStatus: (id: number) => api.get<{ isRead: boolean }>(`/books/${id}/read-status`),
+  /** Explicitly mark the book as read (idempotent — counts once per member). */
+  markRead: (id: number) => api.post<null>(`/books/${id}/mark-read`),
 
   save: (bookId: number) => api.post<null>(`/saved-books/${bookId}`),
   unsave: (bookId: number) => api.delete<null>(`/saved-books/${bookId}`),

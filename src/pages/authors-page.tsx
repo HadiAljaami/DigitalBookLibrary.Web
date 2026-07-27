@@ -75,9 +75,20 @@ export function AuthorsPage() {
     },
     {
       accessorKey: "hasAccount",
-      header: t("authors.hasAccount"),
-      cell: ({ row }) =>
-        row.original.hasAccount ? <Badge variant="secondary">{t("common.yes")}</Badge> : "—",
+      header: t("authors.account"),
+      cell: ({ row }) => {
+        const { hasAccount, accountCanPublish } = row.original;
+        if (!hasAccount) {
+          return <span className="text-muted-foreground">{t("authors.accountNone")}</span>;
+        }
+        return accountCanPublish ? (
+          <Badge variant="success">{t("authors.accountActive")}</Badge>
+        ) : (
+          <Badge variant="outline" title={t("authors.accountRevokedHint")}>
+            {t("authors.accountRevoked")}
+          </Badge>
+        );
+      },
     },
     {
       accessorKey: "isVisible",

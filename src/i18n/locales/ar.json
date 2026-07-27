@@ -11,6 +11,7 @@
     "confirm": "تأكيد",
     "close": "إغلاق",
     "loading": "جارٍ التحميل...",
+    "loadMore": "تحميل المزيد",
     "noData": "لا توجد بيانات",
     "error": "حدث خطأ",
     "retry": "إعادة المحاولة",
@@ -63,6 +64,7 @@
     "resetPassword": "إعادة تعيين كلمة المرور",
     "resetPasswordFor": "إعادة تعيين كلمة مرور \"{{name}}\"",
     "passwordReset": "تمت إعادة تعيين كلمة المرور",
+    "rolesEditHint": "يمكن تغيير الأدوار من قائمة الصف (⋯) في جدول المستخدمين.",
     "confirmDelete": "حذف المستخدم \"{{name}}\"؟ ستعود كتبه إلى المكتبة."
   },
   "public": {
@@ -82,6 +84,9 @@
     "backToLibrary": "العودة إلى المكتبة",
     "backToAuthors": "العودة إلى المؤلفين",
     "read": "اقرأ الآن",
+    "markRead": "تحديد كمقروء",
+    "readDone": "مقروء",
+    "markedRead": "تم التحديد كمقروء",
     "download": "تحميل",
     "save": "حفظ",
     "saved": "محفوظ",
@@ -91,6 +96,7 @@
     "myLibrarySubtitle": "كتبك المحفوظة والمقروءة والمُحمّلة",
     "myBooks": "كتبي",
     "myBooksSubtitle": "الكتب التي نشرتها",
+    "myAccount": "حسابي",
     "publishBook": "نشر كتاب",
     "noPublished": "لم تنشر أي كتاب بعد",
     "tabSaved": "المحفوظة",
@@ -141,6 +147,8 @@
     "noComments": "لا توجد تعليقات بعد — كن أول المعلّقين",
     "reply": "رد",
     "replyPlaceholder": "اكتب رداً...",
+    "showReplies": "عرض {{count}} ردود",
+    "hideReplies": "إخفاء الردود",
     "confirmDeleteComment": "حذف هذا التعليق؟"
   },
   "settings": {
@@ -153,7 +161,8 @@
     "confirmPassword": "تأكيد كلمة المرور الجديدة",
     "passwordChanged": "تم تغيير كلمة المرور",
     "passwordTooShort": "٦ أحرف على الأقل",
-    "passwordMismatch": "كلمتا المرور غير متطابقتين"
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "forgotPasswordHint": "نسيت كلمة المرور الحالية؟ اطلب من المدير إعادة تعيينها لك."
   },
   "audit": {
     "subtitle": "سجل كامل لكل التغييرات على النظام",
@@ -181,6 +190,8 @@
     "hidden": "مخفي",
     "available": "متاح",
     "unavailable": "غير متاح",
+    "toggleVisibility": "اضغط لإظهار/إخفاء الكتاب في المكتبة العامة",
+    "toggleAvailability": "اضغط للسماح/منع التنزيل",
     "hide": "إخفاء",
     "show": "إظهار",
     "makeAvailable": "جعله متاحاً",
@@ -239,6 +250,11 @@
     "imageUrl": "رابط الصورة",
     "visible": "ظاهر",
     "hasAccount": "له حساب",
+    "account": "الحساب",
+    "accountNone": "بلا حساب",
+    "accountActive": "مؤلف فعّال",
+    "accountRevoked": "موقوف",
+    "accountRevokedHint": "لديه حساب لكن دور «مؤلف» مسحوب. أعد منحه دور «مؤلف» من قسم المستخدمين ليتمكن من النشر مجددًا.",
     "createAccount": "إنشاء حساب دخول لهذا المؤلف",
     "hasAccountNote": "هذا المؤلف لديه حساب دخول بالفعل.",
     "confirmDelete": "حذف المؤلف \"{{name}}\"؟"

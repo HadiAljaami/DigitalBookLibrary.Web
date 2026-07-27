@@ -21,6 +21,8 @@ export type BookListItem = {
   isVisible: boolean;
   downloadsCount: number;
   readsCount: number;
+  averageRating: number;
+  ratingCount: number;
 };
 
 export type BookQuery = PaginationParams & {
@@ -42,8 +44,6 @@ export type BookDetails = BookListItem & {
   publisherName: string | null;
   hasFile: boolean;
   fileSizeMb: number | null;
-  averageRating: number;
-  ratingCount: number;
 };
 
 /** Create/update payload — mirrors the backend SaveBookDto. Files are uploaded separately. */
@@ -66,7 +66,10 @@ export type Author = {
   nationality: string | null;
   imageUrl: string | null;
   isVisible: boolean;
+  /** True when the author's person has a login account (active or role-revoked). */
   hasAccount: boolean;
+  /** True only when that account currently holds the Author role (can publish). */
+  accountCanPublish: boolean;
 };
 
 export type AuthorDetails = Author & {

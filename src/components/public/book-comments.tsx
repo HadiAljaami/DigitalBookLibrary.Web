@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Reply, Pencil, Trash2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { feedbackService } from "@/services/feedback-service";
 import { useAuth } from "@/providers/auth-provider";
 import { toast } from "@/lib/toast-store";
@@ -13,14 +13,20 @@ import { errorMessage } from "@/lib/error-message";
 import { formatDate } from "@/lib/format";
 import { type Comment } from "@/types/feedback";
 
+const PAGE_SIZE = 10;
+
 export function BookComments({ bookId }: { bookId: number }) {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const [text, setText] = useState("");
 
-  const thread = useQuery({
+  // Top-level comments load a page at a time (each brings its replies) — a book with thousands of
+  // comments never loads them all at once.
+  const thread = useInfiniteQuery({
     queryKey: ["comments", bookId],
-    queryFn: () => feedbackService.comments(bookId),
+    queryFn: ({ pageParam }) => feedbackService.comments(bookId, { pageNumber: pageParam, pageSize: PAGE_SIZE }),
+    initialPageParam: 1,
+    getNextPageParam: (last) => (last.hasNext ? last.pageNumber + 1 : undefined),
   });
 
   const add = useAddComment(bookId);
@@ -33,8 +39,9 @@ export function BookComments({ bookId }: { bookId: number }) {
     );
   }
 
-  const comments = thread.data ?? [];
-  const count = countComments(comments);
+  const comments = thread.data?.pages.flatMap((p) => p.items) ?? [];
+  // The header shows the total number of top-level comments (the paged unit).
+  const count = thread.data?.pages[0]?.totalCount ?? 0;
 
   return (
     <div className="rounded-xl border bg-card p-5">
@@ -67,12 +74,27 @@ export function BookComments({ bookId }: { bookId: number }) {
       )}
 
       {comments.length === 0 ? (
-        <p className="py-6 text-center text-sm text-muted-foreground">{t("feedback.noComments")}</p>
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          {thread.isLoading ? t("common.loading") : t("feedback.noComments")}
+        </p>
       ) : (
         <div className="space-y-5">
           {comments.map((c) => (
             <CommentNode key={c.id} bookId={bookId} comment={c} depth={0} />
           ))}
+        </div>
+      )}
+
+      {thread.hasNextPage && (
+        <div className="mt-5 flex justify-center">
+          <Button
+            variant="outline"
+            onClick={() => thread.fetchNextPage()}
+            disabled={thread.isFetchingNextPage}
+          >
+            {thread.isFetchingNextPage && <Loader2 className="h-4 w-4 animate-spin" />}
+            {t("common.loadMore")}
+          </Button>
         </div>
       )}
     </div>
@@ -86,6 +108,8 @@ function CommentNode({ bookId, comment, depth }: { bookId: number; comment: Comm
   const [editing, setEditing] = useState(false);
   const [replyText, setReplyText] = useState("");
   const [editText, setEditText] = useState(comment.text);
+  // Long reply lists start collapsed so a heavily-discussed comment doesn't flood the view.
+  const [showReplies, setShowReplies] = useState(comment.replies.length <= 3);
 
   const queryClient = useQueryClient();
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["comments", bookId] });
@@ -115,6 +139,7 @@ function CommentNode({ bookId, comment, depth }: { bookId: number; comment: Comm
     <div className={depth > 0 ? "ms-6 border-s ps-4" : ""}>
       <div className="flex gap-3">
         <Avatar className="h-8 w-8 shrink-0">
+          <AvatarImage src={`/api/users/${comment.userId}/avatar`} alt="" />
           <AvatarFallback>
             {comment.userName ? comment.userName.slice(0, 2).toUpperCase() : <User className="h-4 w-4" />}
           </AvatarFallback>
@@ -195,10 +220,22 @@ function CommentNode({ bookId, comment, depth }: { bookId: number; comment: Comm
       </div>
 
       {comment.replies.length > 0 && (
-        <div className="mt-4 space-y-4">
-          {comment.replies.map((r) => (
-            <CommentNode key={r.id} bookId={bookId} comment={r} depth={depth + 1} />
-          ))}
+        <div className="mt-3">
+          <button
+            className="ms-11 text-xs font-medium text-primary hover:underline"
+            onClick={() => setShowReplies((v) => !v)}
+          >
+            {showReplies
+              ? t("feedback.hideReplies")
+              : t("feedback.showReplies", { count: comment.replies.length })}
+          </button>
+          {showReplies && (
+            <div className="mt-4 space-y-4">
+              {comment.replies.map((r) => (
+                <CommentNode key={r.id} bookId={bookId} comment={r} depth={depth + 1} />
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -219,6 +256,3 @@ function useAddComment(bookId: number) {
   });
 }
 
-function countComments(list: Comment[]): number {
-  return list.reduce((sum, c) => sum + 1 + countComments(c.replies), 0);
-}
