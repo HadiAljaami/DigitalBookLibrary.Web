@@ -72,7 +72,7 @@ export function PublicLibraryPage() {
           {items.map((b: BookListItem) => (
             <Link
               key={b.id}
-              to={`/library/books/${b.id}`}
+              to={`/books/${b.id}`}
               className="group flex flex-col overflow-hidden rounded-xl border bg-card transition hover:shadow-md"
             >
               <div className="flex aspect-[3/4] items-center justify-center overflow-hidden bg-muted">

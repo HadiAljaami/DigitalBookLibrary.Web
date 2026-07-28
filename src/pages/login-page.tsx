@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useNavigate, useLocation, Navigate, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Library, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -26,10 +26,10 @@ export function LoginPage() {
 
   const from = (location.state as { from?: string })?.from;
 
-  // Admins land on the dashboard; members land on the public library.
+  // Admins land on the dashboard; members land on the public library (the root).
   function destinationFor(admin: boolean) {
     if (from) return from;
-    return admin ? "/" : "/library";
+    return admin ? "/dashboard" : "/";
   }
 
   // Already signed in → go to where they were headed (or their home area).
@@ -107,6 +107,18 @@ export function LoginPage() {
               {loading ? t("auth.signingIn") : t("auth.signIn")}
             </Button>
           </form>
+
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            {t("auth.noAccount")}{" "}
+            <Link to="/register" className="font-medium text-primary hover:underline">
+              {t("auth.createAccount")}
+            </Link>
+          </p>
+          <p className="mt-2 text-center text-sm">
+            <Link to="/" className="text-muted-foreground hover:text-foreground hover:underline">
+              {t("auth.browseAsGuest")}
+            </Link>
+          </p>
         </CardContent>
       </Card>
     </div>

@@ -180,7 +180,7 @@ export function PublicHomePage() {
 function BookCard({ b }: { b: BookListItem }) {
   return (
     <Link
-      to={`/library/books/${b.id}`}
+      to={`/books/${b.id}`}
       className="group flex h-full flex-col overflow-hidden rounded-xl border bg-card transition hover:shadow-md"
     >
       {/* Padded, contained cover so the whole book shows (no cropping at the edges) with a soft shelf look. */}

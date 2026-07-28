@@ -39,33 +39,33 @@ export type NavSection = {
 */
 export const navigation: NavSection[] = [
   {
-    items: [{ labelKey: "dashboard", to: "/", icon: LayoutDashboard }],
+    items: [{ labelKey: "dashboard", to: "/dashboard", icon: LayoutDashboard }],
   },
   {
     titleKey: "nav.catalog",
     items: [
-      { labelKey: "books", to: "/books", icon: BookOpen },
-      { labelKey: "authors", to: "/authors", icon: PenTool },
-      { labelKey: "categories", to: "/categories", icon: FolderTree },
-      { labelKey: "publishers", to: "/publishers", icon: Building2 },
+      { labelKey: "books", to: "/dashboard/books", icon: BookOpen },
+      { labelKey: "authors", to: "/dashboard/authors", icon: PenTool },
+      { labelKey: "categories", to: "/dashboard/categories", icon: FolderTree },
+      { labelKey: "publishers", to: "/dashboard/publishers", icon: Building2 },
     ],
   },
   {
     titleKey: "nav.administration",
     items: [
-      { labelKey: "users", to: "/users", icon: Users },
-      { labelKey: "authorRequests", to: "/author-requests", icon: UserPlus },
+      { labelKey: "users", to: "/dashboard/users", icon: Users },
+      { labelKey: "authorRequests", to: "/dashboard/author-requests", icon: UserPlus },
       {
         labelKey: "reports",
         icon: BarChart3,
         children: [
-          { labelKey: "reportsOverview", to: "/reports/overview" },
-          { labelKey: "reportsBooks", to: "/reports/books" },
-          { labelKey: "reportsUsers", to: "/reports/users" },
+          { labelKey: "reportsOverview", to: "/dashboard/reports/overview" },
+          { labelKey: "reportsBooks", to: "/dashboard/reports/books" },
+          { labelKey: "reportsUsers", to: "/dashboard/reports/users" },
         ],
       },
-      { labelKey: "audit", to: "/audit", icon: ScrollText },
-      { labelKey: "settings", to: "/settings", icon: Settings },
+      { labelKey: "audit", to: "/dashboard/audit", icon: ScrollText },
+      { labelKey: "settings", to: "/dashboard/settings", icon: Settings },
     ],
   },
 ];

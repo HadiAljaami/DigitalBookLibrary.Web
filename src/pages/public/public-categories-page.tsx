@@ -37,7 +37,7 @@ function CategoryCard({ category, browseLabel }: { category: Category; browseLab
   return (
     <div className="rounded-xl border bg-card p-5">
       <Link
-        to={`/library?category=${category.id}`}
+        to={`/?category=${category.id}`}
         className="group flex items-center justify-between gap-2"
       >
         <span className="flex items-center gap-2 font-semibold">
@@ -57,7 +57,7 @@ function CategoryCard({ category, browseLabel }: { category: Category; browseLab
           {children.map((child) => (
             <Link
               key={child.id}
-              to={`/library?category=${child.id}`}
+              to={`/?category=${child.id}`}
               className="rounded-full bg-muted px-2.5 py-1 text-xs text-muted-foreground transition hover:bg-primary/10 hover:text-primary"
             >
               {child.name}

@@ -66,7 +66,7 @@ export function Topbar({ onMenuClick }: TopbarProps) {
               <p className="text-xs font-normal text-muted-foreground">{user?.email}</p>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onSelect={() => navigate("/settings")}>
+            <DropdownMenuItem onSelect={() => navigate("/dashboard/settings")}>
               <User className="h-4 w-4" />
               {t("user.profile")}
             </DropdownMenuItem>

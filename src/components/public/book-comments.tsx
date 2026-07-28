@@ -66,7 +66,7 @@ export function BookComments({ bookId }: { bookId: number }) {
         </div>
       ) : (
         <p className="mb-6 text-sm text-muted-foreground">
-          <Link to="/login" state={{ from: `/library/books/${bookId}` }} className="text-primary hover:underline">
+          <Link to="/login" state={{ from: `/books/${bookId}` }} className="text-primary hover:underline">
             {t("public.signIn")}
           </Link>{" "}
           {t("feedback.signInToComment")}

@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AppLayout } from "@/components/layout/app-layout";
 import { ProtectedRoute } from "@/components/auth/protected-route";
 import { AdminRoute } from "@/components/auth/admin-route";
@@ -33,8 +33,8 @@ export function App() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<PublicRegisterPage />} />
 
-      {/* Public visitor site "واحة المعرفة" — browsing needs no authentication. */}
-      <Route path="/library" element={<PublicLayout />}>
+      {/* Public visitor site "واحة المعرفة" at the root — browsing needs no authentication. */}
+      <Route path="/" element={<PublicLayout />}>
         <Route index element={<PublicHomePage />} />
         <Route path="books/:id" element={<PublicBookPage />} />
         <Route path="authors" element={<PublicAuthorsPage />} />
@@ -64,9 +64,13 @@ export function App() {
             </ProtectedRoute>
           }
         />
+        {/* Unknown public paths fall back to the home page. */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
 
+      {/* Admin dashboard lives under /dashboard. */}
       <Route
+        path="dashboard"
         element={
           <ProtectedRoute>
             <AdminRoute>

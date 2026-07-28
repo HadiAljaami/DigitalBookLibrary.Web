@@ -92,7 +92,7 @@ export function BookRating({ bookId }: { bookId: number }) {
           </div>
         ) : (
           <p className="text-sm text-muted-foreground">
-            <Link to="/login" state={{ from: `/library/books/${bookId}` }} className="text-primary hover:underline">
+            <Link to="/login" state={{ from: `/books/${bookId}` }} className="text-primary hover:underline">
               {t("public.signIn")}
             </Link>{" "}
             {t("feedback.signInToRate")}

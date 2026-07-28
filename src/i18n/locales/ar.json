@@ -341,7 +341,9 @@
     "registerTitle": "أنشئ حسابك",
     "registerSubtitle": "انضم لتقرأ وتحمّل وتحفظ الكتب",
     "createAccount": "إنشاء حساب",
-    "haveAccount": "لديك حساب بالفعل؟"
+    "haveAccount": "لديك حساب بالفعل؟",
+    "noAccount": "ليس لديك حساب؟",
+    "browseAsGuest": "تصفّح المكتبة كزائر"
   },
   "errors": {
     "AUTH_INVALID_CREDENTIALS": "البريد/اسم المستخدم أو كلمة المرور غير صحيحة",

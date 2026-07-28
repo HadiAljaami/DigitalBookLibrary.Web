@@ -86,7 +86,7 @@ export function PublicMyBooksPage() {
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <Link to={`/library/books/${b.id}`} className="font-medium hover:underline">
+                <Link to={`/books/${b.id}`} className="font-medium hover:underline">
                   {b.title}
                 </Link>
                 <div className="mt-1 flex flex-wrap gap-1.5">

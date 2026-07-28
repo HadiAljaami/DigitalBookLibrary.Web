@@ -8,7 +8,7 @@ import { useAuth } from "@/providers/auth-provider";
 export function AdminRoute({ children }: { children: React.ReactNode }) {
   const { isAdmin } = useAuth();
   if (!isAdmin) {
-    return <Navigate to="/library" replace />;
+    return <Navigate to="/" replace />;
   }
   return <>{children}</>;
 }

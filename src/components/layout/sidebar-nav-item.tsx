@@ -52,7 +52,7 @@ function LeafItem({
 }) {
   const { t } = useTranslation();
   const label = t(`nav.${item.labelKey}`);
-  const active = !!useMatch({ path: to, end: to === "/" });
+  const active = !!useMatch({ path: to, end: to === "/dashboard" });
 
   const link = (
     <NavLink

@@ -341,7 +341,9 @@
     "registerTitle": "Create your account",
     "registerSubtitle": "Join to read, download and save books",
     "createAccount": "Create account",
-    "haveAccount": "Already have an account?"
+    "haveAccount": "Already have an account?",
+    "noAccount": "Don't have an account?",
+    "browseAsGuest": "Browse the library as a guest"
   },
   "errors": {
     "AUTH_INVALID_CREDENTIALS": "Email/username or password is incorrect",

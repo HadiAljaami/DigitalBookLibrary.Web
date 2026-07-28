@@ -51,7 +51,7 @@ export function BecomeAuthorCard() {
           <BadgeCheck className="h-6 w-6 text-primary" />
           <div>
             <p className="font-medium">{t("becomeAuthor.youAreAuthor")}</p>
-            <Link to="/library/my-books" className="text-sm text-primary hover:underline">
+            <Link to="/my-books" className="text-sm text-primary hover:underline">
               {t("public.myBooks")}
             </Link>
           </div>

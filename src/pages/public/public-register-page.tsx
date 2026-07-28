@@ -41,7 +41,7 @@ export function PublicRegisterPage() {
       });
       // Sign the new member straight in and drop them into the library.
       await login(form.username.trim(), form.password);
-      navigate("/library", { replace: true });
+      navigate("/", { replace: true });
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -117,7 +117,7 @@ export function PublicRegisterPage() {
 
             <p className="text-center text-sm text-muted-foreground">
               {t("auth.haveAccount")}{" "}
-              <Link to="/login" state={{ from: "/library" }} className="font-medium text-primary hover:underline">
+              <Link to="/login" state={{ from: "/" }} className="font-medium text-primary hover:underline">
                 {t("auth.signIn")}
               </Link>
             </p>

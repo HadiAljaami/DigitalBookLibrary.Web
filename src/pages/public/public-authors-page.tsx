@@ -71,7 +71,7 @@ export function PublicAuthorsPage() {
             return (
               <Link
                 key={a.id}
-                to={`/library/authors/${a.id}`}
+                to={`/authors/${a.id}`}
                 className="flex flex-col items-center gap-3 rounded-xl border bg-card p-5 text-center transition hover:shadow-md"
               >
                 <Avatar className="h-20 w-20">

@@ -128,7 +128,7 @@ export function PublicBookPage() {
       <div className="py-16 text-center">
         <p className="text-muted-foreground">{t("common.noData")}</p>
         <Button asChild variant="link" className="mt-2">
-          <Link to="/library">{t("public.backToLibrary")}</Link>
+          <Link to="/">{t("public.backToLibrary")}</Link>
         </Button>
       </div>
     );
@@ -139,7 +139,7 @@ export function PublicBookPage() {
   return (
     <div className="space-y-6">
       <Button asChild variant="ghost" size="sm" className="gap-2">
-        <Link to="/library">
+        <Link to="/">
           <ArrowLeft className="h-4 w-4" />
           {t("public.backToLibrary")}
         </Link>
@@ -245,7 +245,7 @@ export function PublicBookPage() {
               </>
             ) : (
               <Button asChild className="gap-2">
-                <Link to="/login" state={{ from: `/library/books/${bookId}` }}>
+                <Link to="/login" state={{ from: `/books/${bookId}` }}>
                   <Lock className="h-4 w-4" />
                   {t("public.signInToRead")}
                 </Link>

@@ -27,7 +27,7 @@ export function PublicLayout() {
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
-          <Link to="/library" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <BookOpenText className="h-5 w-5" />
             </span>
@@ -36,9 +36,9 @@ export function PublicLayout() {
 
           <nav className="flex items-center gap-1 text-sm">
             {[
-              { to: "/library", label: t("nav.books"), end: true },
-              { to: "/library/authors", label: t("nav.authors"), end: false },
-              { to: "/library/categories", label: t("nav.categories"), end: false },
+              { to: "/", label: t("nav.books"), end: true },
+              { to: "/authors", label: t("nav.authors"), end: false },
+              { to: "/categories", label: t("nav.categories"), end: false },
             ].map((item) => (
               <NavLink
                 key={item.to}
@@ -74,7 +74,7 @@ export function PublicLayout() {
                 <Button
                   size="sm"
                   className="gap-2"
-                  onClick={() => navigate("/login", { state: { from: "/library" } })}
+                  onClick={() => navigate("/login", { state: { from: "/" } })}
                 >
                   <LogIn className="h-4 w-4" />
                   {t("public.signIn")}
@@ -97,22 +97,22 @@ export function PublicLayout() {
                     <p className="text-xs font-normal text-muted-foreground">{user?.email}</p>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={() => navigate("/library/me")}>
+                  <DropdownMenuItem onSelect={() => navigate("/me")}>
                     <Library className="h-4 w-4" />
                     {t("public.myLibrary")}
                   </DropdownMenuItem>
                   {isAuthor && (
-                    <DropdownMenuItem onSelect={() => navigate("/library/my-books")}>
+                    <DropdownMenuItem onSelect={() => navigate("/my-books")}>
                       <PenSquare className="h-4 w-4" />
                       {t("public.myBooks")}
                     </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onSelect={() => navigate("/library/account")}>
+                  <DropdownMenuItem onSelect={() => navigate("/account")}>
                     <UserCog className="h-4 w-4" />
                     {t("public.myAccount")}
                   </DropdownMenuItem>
                   {isAdmin && (
-                    <DropdownMenuItem onSelect={() => navigate("/")}>
+                    <DropdownMenuItem onSelect={() => navigate("/dashboard")}>
                       <LayoutDashboard className="h-4 w-4" />
                       {t("public.dashboard")}
                     </DropdownMenuItem>

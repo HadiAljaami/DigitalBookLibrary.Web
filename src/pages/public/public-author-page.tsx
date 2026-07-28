@@ -34,7 +34,7 @@ export function PublicAuthorPage() {
       <div className="py-16 text-center">
         <p className="text-muted-foreground">{t("common.noData")}</p>
         <Button asChild variant="link" className="mt-2">
-          <Link to="/library/authors">{t("public.backToAuthors")}</Link>
+          <Link to="/authors">{t("public.backToAuthors")}</Link>
         </Button>
       </div>
     );
@@ -48,7 +48,7 @@ export function PublicAuthorPage() {
   return (
     <div className="space-y-8">
       <Button asChild variant="ghost" size="sm" className="gap-2">
-        <Link to="/library/authors">
+        <Link to="/authors">
           <ArrowLeft className="h-4 w-4" />
           {t("public.backToAuthors")}
         </Link>
@@ -108,7 +108,7 @@ export function PublicAuthorPage() {
             {a.books.map((b) => (
               <Link
                 key={b.id}
-                to={`/library/books/${b.id}`}
+                to={`/books/${b.id}`}
                 className="group flex flex-col overflow-hidden rounded-xl border bg-card transition hover:shadow-md"
               >
                 <div className="flex aspect-[3/4] items-center justify-center overflow-hidden bg-muted">
