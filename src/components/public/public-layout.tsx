@@ -1,6 +1,6 @@
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { BookOpenText, LogIn, LayoutDashboard, LogOut, Library, UserPlus, PenSquare, UserCog } from "lucide-react";
+import { BookOpenText, LogIn, LayoutDashboard, LogOut, Library, UserPlus, PenSquare, UserCog, Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -26,7 +26,23 @@ export function PublicLayout() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <header className="sticky top-0 z-30 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80">
-        <div className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4">
+        <div className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4">
+          {/* Mobile: the nav links collapse into a menu so the header fits a phone. */}
+          <div className="md:hidden">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" aria-label={t("nav.books")}>
+                  <Menu className="h-5 w-5" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem onSelect={() => navigate("/")}>{t("nav.books")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate("/authors")}>{t("nav.authors")}</DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => navigate("/categories")}>{t("nav.categories")}</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
           <Link to="/" className="flex items-center gap-2">
             <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
               <BookOpenText className="h-5 w-5" />
@@ -34,7 +50,7 @@ export function PublicLayout() {
             <span className="hidden text-lg font-bold tracking-tight sm:inline">{t("public.brand")}</span>
           </Link>
 
-          <nav className="flex items-center gap-1 text-sm">
+          <nav className="hidden items-center gap-1 text-sm md:flex">
             {[
               { to: "/", label: t("nav.books"), end: true },
               { to: "/authors", label: t("nav.authors"), end: false },
