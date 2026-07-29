@@ -83,13 +83,26 @@ export function PublicBookPage() {
     onError: (err) => toast.error(errorMessage(err)),
   });
 
-  // Streams the PDF (auth-only) and opens it inline in a reader dialog — a preview, not a download.
+  // Reads the PDF. Desktop browsers show it inline in a dialog; mobile browsers can't render a PDF
+  // in an iframe, so there we open it in a new tab and let the device's PDF viewer handle it.
   async function openReader() {
+    const canInline =
+      (navigator as unknown as { pdfViewerEnabled?: boolean }).pdfViewerEnabled !== false;
+    // A new tab must be opened during the click gesture (before the async fetch) or it's blocked.
+    const externalTab = canInline ? null : window.open("", "_blank");
     setBusy("read");
     try {
       const blob = await memberService.readBook(bookId);
-      setReaderUrl(URL.createObjectURL(blob));
+      const url = URL.createObjectURL(blob);
+      if (canInline) {
+        setReaderUrl(url);
+      } else if (externalTab) {
+        externalTab.location.href = url;
+      } else {
+        window.location.href = url; // popup blocked — fall back to same-tab navigation
+      }
     } catch (err) {
+      externalTab?.close();
       toast.error(errorMessage(err));
     } finally {
       setBusy(null);
