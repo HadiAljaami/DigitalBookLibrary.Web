@@ -9,13 +9,62 @@ with light/dark themes, talking to the [ASP.NET Core API](https://github.com/Had
 
 ## Screenshots
 
-| Public library | Book details |
+## 🌐 Public Website — الموقع العام
+
+### Home Page — الصفحة الرئيسية
+| Light Mode | Dark Mode (English) |
 |:---:|:---:|
-| ![Public library](screenshots/home.png) | ![Book details](screenshots/book.png) |
+| ![Home](screenshots/home.png) | ![Home Dark](screenshots/home_E_D.png) |
+
+### Books & Authors — الكتب والمؤلفون
+| Section | Light Mode | Dark Mode |
+|:---:|:---:|:---:|
+| **Books** | ![Books](screenshots/books.png) | ![Books Dark](screenshots/books_D.png) |
+| **Authors** | ![Authors](screenshots/Author_Details.png) | ![Authors Dark](screenshots/Authors_D.png) |
+
+### Categories & My Books — التصنيفات وكتبي 
+| Categories | My Books |
+|:---:|:---:|
+| ![Categories](screenshots/Categories.png) | ![My Books](screenshots/my-books.png) |
+
+### Book Details, Description & Comments — تفاصيل الكتاب والتعليقات
+| Book Details | Description & Comments |
+|:---:|:---:|
+| ![Categories](screenshots/Comments.png) | ![My Books](screenshots/Book-Details.png) |
+
+---
+
+## 🛠️ Admin Dashboard — لوحة التحكم
+
+### Overview & Main Dashboard — النظرة العامة
+| Light Mode | Dark Mode |
+|:---:|:---:|
+| ![Main Dashboard](screenshots/main_dashboard_1.png) | ![Main Dashboard Dark](screenshots/main_dashboard_D_2.png) |
+
+### Management — إدارة المحتوى
+| Section | Screenshot |
+|:---:|:---:|
+| **Categories Dashboard** | ![Categories Dashboard](screenshots/categories_dashboard.png) |
+| **Book Dashboard** | ![Book Dashboard](screenshots/Book_dashboard.png) |
+| **Authors Dashboard** | ![Authors Dashboard](screenshots/Authors_dashboard.png) |
+| **Author Requests Dashboard** | ![Author Requests](screenshots/AuthorRequests_dashboard.png) |
+| **Publishers Dashboard** | ![Publishers Dashboard](screenshots/Publishers_dashboard.png) |
+
+### Reports & Audit Logs — التقارير وسجلات النظام
+| Report Type | Screenshot |
+|:---:|:---:|
+| **Audit Logs (Dark)** | ![Audit Logs](screenshots/AuditLog_dashboard_D.png) |
+| **Audit Logs (English / Dark)** | ![Audit Logs English](screenshots/AuditLog_dashboard_D_E.png) |
+| **Overview Report (English / Dark)** | ![Overview Report](screenshots/OverviewReport_D_E.png) |
+| **Book Reports** | ![Book Reports](screenshots/BookReports_dashboard.png) |
+| **User Reports** | ![User Reports](screenshots/UserReports_dashboard.png) |
+<!-- | Public library | Book details |
+|:---:|:---:|
+| ![Public library](screenshots/home.png) | ![Book details](screenshots/books.png) |
 
 | Admin dashboard | Author — my books |
 |:---:|:---:|
-| ![Admin dashboard](screenshots/dashboard.png) | ![My books](screenshots/my-books.png) |
+| ![Admin dashboard](screenshots/main_dashboard_1.png) | ![My books](screenshots/my-books.png) | -->
 
 ## Features
 
