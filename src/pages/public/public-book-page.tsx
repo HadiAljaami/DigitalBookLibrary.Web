@@ -25,6 +25,12 @@ import { BookComments } from "@/components/public/book-comments";
 const PdfReader = lazy(() =>
   import("@/components/public/pdf-reader").then((m) => ({ default: m.PdfReader })),
 );
+
+// Desktop browsers render PDFs inline in an iframe with their native viewer (best experience —
+// toolbar, zoom, smooth scroll). Mobile browsers can't, so there we fall back to the pdf.js reader.
+const CAN_INLINE_PDF =
+  typeof navigator !== "undefined" &&
+  (navigator as { pdfViewerEnabled?: boolean }).pdfViewerEnabled === true;
 import { catalogService } from "@/services/catalog-service";
 import { memberService } from "@/services/member-service";
 import { useLanguages, useLocalName, findById } from "@/hooks/use-lookups";
@@ -273,17 +279,20 @@ export function PublicBookPage() {
       <Dialog open={readerUrl !== null} onOpenChange={(open) => !open && closeReader()}>
         <DialogContent className="h-[90vh] max-w-5xl overflow-hidden p-0">
           <DialogTitle className="sr-only">{b.title}</DialogTitle>
-          {readerUrl && (
-            <Suspense
-              fallback={
-                <div className="flex h-full items-center justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              }
-            >
-              <PdfReader fileUrl={readerUrl} />
-            </Suspense>
-          )}
+          {readerUrl &&
+            (CAN_INLINE_PDF ? (
+              <iframe src={readerUrl} title={b.title} className="h-full w-full" />
+            ) : (
+              <Suspense
+                fallback={
+                  <div className="flex h-full items-center justify-center">
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                  </div>
+                }
+              >
+                <PdfReader fileUrl={readerUrl} />
+              </Suspense>
+            ))}
         </DialogContent>
       </Dialog>
     </div>
