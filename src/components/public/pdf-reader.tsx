@@ -3,12 +3,10 @@ import { Document, Page, pdfjs } from "react-pdf";
 import { useTranslation } from "react-i18next";
 import { Loader2 } from "lucide-react";
 
-// Bundle the pdf.js worker (matched to the installed pdfjs-dist) so rendering works on any host,
-// offline, without an external CDN. Vite fingerprints and serves it from our own origin.
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url,
-).toString();
+// Serve the pdf.js worker from /public with a fixed name. A bundler-hashed asset URL was being
+// caught by the SPA rewrite on the host (returned index.html instead of the worker → blank page);
+// a real file in /public is served directly, before any rewrite. Keep it matched to pdfjs-dist.
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
 const INITIAL_PAGES = 3;
 const PAGE_STEP = 3;
