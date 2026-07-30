@@ -69,17 +69,16 @@ export function PublicHomePage() {
   const total = books.data?.pages[0]?.totalCount ?? 0;
   const items = books.data?.pages.flatMap((p) => p.items) ?? [];
 
-  // Showcase rows appear only on the plain landing view (no search or filter).
+  // One showcase row with a selector (newest / most read / most downloaded) — appears only on the
+  // plain landing view (no search or filter). One row instead of three avoids showing the same
+  // popular books repeated, and needs no backend change (all three sorts already exist).
   const isDefault = !debounced && categoryId === ALL && languageId === ALL;
-  const showcase = (sortBy: string) =>
-    useQuery({
-      queryKey: ["showcase", sortBy],
-      queryFn: () => catalogService.books({ pageNumber: 1, pageSize: 10, sortBy, desc: true }),
-      enabled: isDefault,
-    });
-  const newest = showcase("date");
-  const topDownloads = showcase("downloads");
-  const topReads = showcase("reads");
+  const [showcaseSort, setShowcaseSort] = useState<"date" | "reads" | "downloads">("date");
+  const showcase = useQuery({
+    queryKey: ["showcase", showcaseSort],
+    queryFn: () => catalogService.books({ pageNumber: 1, pageSize: 10, sortBy: showcaseSort, desc: true }),
+    enabled: isDefault,
+  });
 
   return (
     <div className="space-y-8">
@@ -140,13 +139,13 @@ export function PublicHomePage() {
         <span className="text-sm text-muted-foreground">{t("public.results", { count: total })}</span>
       </div>
 
-      {/* Showcase rows on the plain landing view */}
+      {/* Showcase: one row with a newest / most-read / most-downloaded selector */}
       {isDefault && (
-        <div className="space-y-8">
-          <Showcase title={t("public.newest")} books={newest.data?.items ?? []} />
-          <Showcase title={t("public.mostDownloaded")} books={topDownloads.data?.items ?? []} />
-          <Showcase title={t("public.mostRead")} books={topReads.data?.items ?? []} />
-        </div>
+        <Showcase
+          sort={showcaseSort}
+          onSortChange={setShowcaseSort}
+          books={showcase.data?.items ?? []}
+        />
       )}
 
       {/* Grid */}
@@ -212,17 +211,53 @@ function BookCard({ b }: { b: BookListItem }) {
   );
 }
 
-/** A titled showcase row — the same responsive grid as the main list, so every card is one size. */
-function Showcase({ title, books }: { title: string; books: BookListItem[] }) {
-  if (books.length === 0) return null;
+type ShowcaseSort = "date" | "reads" | "downloads";
+
+/** One showcase row with a newest / most-read / most-downloaded selector. */
+function Showcase({
+  sort,
+  onSortChange,
+  books,
+}: {
+  sort: ShowcaseSort;
+  onSortChange: (s: ShowcaseSort) => void;
+  books: BookListItem[];
+}) {
+  const { t } = useTranslation();
+  const tabs: { key: ShowcaseSort; labelKey: string }[] = [
+    { key: "date", labelKey: "public.newest" },
+    { key: "reads", labelKey: "public.mostRead" },
+    { key: "downloads", labelKey: "public.mostDownloaded" },
+  ];
+
   return (
     <section>
-      <h2 className="mb-3 text-lg font-semibold">{title}</h2>
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {books.slice(0, 5).map((b) => (
-          <BookCard key={b.id} b={b} />
+      <div className="mb-3 inline-flex rounded-lg border bg-muted/40 p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.key}
+            type="button"
+            onClick={() => onSortChange(tab.key)}
+            className={
+              "rounded-md px-3 py-1.5 text-sm transition " +
+              (sort === tab.key
+                ? "bg-background font-medium text-foreground shadow-sm"
+                : "text-muted-foreground hover:text-foreground")
+            }
+          >
+            {t(tab.labelKey)}
+          </button>
         ))}
       </div>
+      {books.length === 0 ? (
+        <p className="py-8 text-center text-sm text-muted-foreground">{t("common.noData")}</p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+          {books.slice(0, 5).map((b) => (
+            <BookCard key={b.id} b={b} />
+          ))}
+        </div>
+      )}
     </section>
   );
 }
