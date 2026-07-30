@@ -110,7 +110,16 @@ export const api = {
     return request<T>({ method: "POST", url, data: form });
   },
 
-  /** Fetches a binary response (e.g. a PDF) as a Blob, with the auth header applied. */
-  blob: (url: string) =>
-    client.request<Blob>({ method: "GET", url, responseType: "blob" }).then((r) => r.data),
+  /** Fetches a binary response (e.g. a PDF) as a Blob, with the auth header and optional progress. */
+  blob: (url: string, onProgress?: (p: { loaded: number; total?: number }) => void) =>
+    client
+      .request<Blob>({
+        method: "GET",
+        url,
+        responseType: "blob",
+        onDownloadProgress: onProgress
+          ? (e) => onProgress({ loaded: e.loaded, total: e.total })
+          : undefined,
+      })
+      .then((r) => r.data),
 };

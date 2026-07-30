@@ -52,7 +52,9 @@ export function PublicBookPage() {
   const languages = useLanguages();
   const queryClient = useQueryClient();
 
+  const [readerOpen, setReaderOpen] = useState(false);
   const [readerUrl, setReaderUrl] = useState<string | null>(null);
+  const [readProgress, setReadProgress] = useState<number | null>(null);
   const [busy, setBusy] = useState<"read" | "download" | null>(null);
 
   const book = useQuery({
@@ -98,14 +100,21 @@ export function PublicBookPage() {
     onError: (err) => toast.error(errorMessage(err)),
   });
 
-  // Reads the PDF in the in-app pdf.js reader — renders pages on canvas, so it works the same on
-  // desktop and mobile (no download, no blank tab).
+  // Opens the reader dialog immediately with a loading indicator, then streams the PDF (with a
+  // download %). The whole file must be fetched with the auth token before it can be shown, and a
+  // large book on a slow connection can take a while — hence the visible progress.
   async function openReader() {
+    setReaderOpen(true);
+    setReaderUrl(null);
+    setReadProgress(0);
     setBusy("read");
     try {
-      const blob = await memberService.readBook(bookId);
+      const blob = await memberService.readBook(bookId, (p) =>
+        setReadProgress(p.total ? Math.round((p.loaded / p.total) * 100) : null),
+      );
       setReaderUrl(URL.createObjectURL(blob));
     } catch (err) {
+      setReaderOpen(false);
       toast.error(errorMessage(err));
     } finally {
       setBusy(null);
@@ -132,6 +141,8 @@ export function PublicBookPage() {
   function closeReader() {
     if (readerUrl) URL.revokeObjectURL(readerUrl);
     setReaderUrl(null);
+    setReaderOpen(false);
+    setReadProgress(null);
   }
 
   const b = book.data;
@@ -279,24 +290,31 @@ export function PublicBookPage() {
         </div>
       </div>
 
-      {/* In-app PDF reader (pdf.js) — works on desktop and mobile alike. */}
-      <Dialog open={readerUrl !== null} onOpenChange={(open) => !open && closeReader()}>
+      {/* In-app PDF reader — opens immediately with a loading indicator while the file downloads. */}
+      <Dialog open={readerOpen} onOpenChange={(open) => !open && closeReader()}>
         <DialogContent className="h-[90vh] max-w-5xl overflow-hidden p-0">
           <DialogTitle className="sr-only">{b.title}</DialogTitle>
-          {readerUrl &&
-            (CAN_INLINE_PDF ? (
-              <iframe src={readerUrl} title={b.title} className="h-full w-full" />
-            ) : (
-              <Suspense
-                fallback={
-                  <div className="flex h-full items-center justify-center">
-                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                  </div>
-                }
-              >
-                <PdfReader fileUrl={readerUrl} />
-              </Suspense>
-            ))}
+          {!readerUrl ? (
+            <div className="flex h-full flex-col items-center justify-center gap-3 text-muted-foreground">
+              <Loader2 className="h-8 w-8 animate-spin" />
+              <p className="text-sm">
+                {t("public.loadingBook")}
+                {readProgress != null ? ` ${readProgress}%` : ""}
+              </p>
+            </div>
+          ) : CAN_INLINE_PDF ? (
+            <iframe src={readerUrl} title={b.title} className="h-full w-full" />
+          ) : (
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              }
+            >
+              <PdfReader fileUrl={readerUrl} />
+            </Suspense>
+          )}
         </DialogContent>
       </Dialog>
     </div>
