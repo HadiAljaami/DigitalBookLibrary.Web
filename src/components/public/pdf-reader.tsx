@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { useTranslation } from "react-i18next";
-import { Loader2 } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Serve the pdf.js worker from /public with a fixed name. A bundler-hashed asset URL was being
 // caught by the SPA rewrite on the host (returned index.html instead of the worker → blank page);
@@ -60,8 +61,14 @@ export function PdfReader({ fileUrl }: { fileUrl: string }) {
           </div>
         }
         error={
-          <div className="flex h-[70vh] items-center justify-center text-destructive">
-            {t("common.error")}
+          <div className="flex h-[70vh] flex-col items-center justify-center gap-3 p-6 text-center">
+            <p className="text-sm text-muted-foreground">{t("public.readerFallback")}</p>
+            <Button asChild>
+              <a href={fileUrl} download="book.pdf">
+                <Download className="h-4 w-4" />
+                {t("public.download")}
+              </a>
+            </Button>
           </div>
         }
         onLoadSuccess={({ numPages }) => {

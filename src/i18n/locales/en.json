@@ -88,6 +88,7 @@
     "readDone": "Read",
     "markedRead": "Marked as read",
     "loadingBook": "Loading the book...",
+    "readerFallback": "This browser couldn't display the book. You can download it and open it in your PDF app.",
     "download": "Download",
     "save": "Save",
     "saved": "Saved",
