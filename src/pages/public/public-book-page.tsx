@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, lazy, Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -20,6 +20,11 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { ZoomableImage } from "@/components/ui/zoomable-image";
 import { BookRating } from "@/components/public/book-rating";
 import { BookComments } from "@/components/public/book-comments";
+
+// Lazy-loaded so pdf.js (a large dependency) only downloads when a reader is actually opened.
+const PdfReader = lazy(() =>
+  import("@/components/public/pdf-reader").then((m) => ({ default: m.PdfReader })),
+);
 import { catalogService } from "@/services/catalog-service";
 import { memberService } from "@/services/member-service";
 import { useLanguages, useLocalName, findById } from "@/hooks/use-lookups";
@@ -83,26 +88,14 @@ export function PublicBookPage() {
     onError: (err) => toast.error(errorMessage(err)),
   });
 
-  // Reads the PDF. Desktop browsers show it inline in a dialog; mobile browsers can't render a PDF
-  // in an iframe, so there we open it in a new tab and let the device's PDF viewer handle it.
+  // Reads the PDF in the in-app pdf.js reader — renders pages on canvas, so it works the same on
+  // desktop and mobile (no download, no blank tab).
   async function openReader() {
-    const canInline =
-      (navigator as unknown as { pdfViewerEnabled?: boolean }).pdfViewerEnabled !== false;
-    // A new tab must be opened during the click gesture (before the async fetch) or it's blocked.
-    const externalTab = canInline ? null : window.open("", "_blank");
     setBusy("read");
     try {
       const blob = await memberService.readBook(bookId);
-      const url = URL.createObjectURL(blob);
-      if (canInline) {
-        setReaderUrl(url);
-      } else if (externalTab) {
-        externalTab.location.href = url;
-      } else {
-        window.location.href = url; // popup blocked — fall back to same-tab navigation
-      }
+      setReaderUrl(URL.createObjectURL(blob));
     } catch (err) {
-      externalTab?.close();
       toast.error(errorMessage(err));
     } finally {
       setBusy(null);
@@ -276,12 +269,20 @@ export function PublicBookPage() {
         </div>
       </div>
 
-      {/* Inline PDF reader (preview) */}
+      {/* In-app PDF reader (pdf.js) — works on desktop and mobile alike. */}
       <Dialog open={readerUrl !== null} onOpenChange={(open) => !open && closeReader()}>
-        <DialogContent className="h-[88vh] max-w-5xl p-2">
+        <DialogContent className="h-[90vh] max-w-5xl overflow-hidden p-0">
           <DialogTitle className="sr-only">{b.title}</DialogTitle>
           {readerUrl && (
-            <iframe src={readerUrl} title={b.title} className="h-full w-full rounded-md border" />
+            <Suspense
+              fallback={
+                <div className="flex h-full items-center justify-center">
+                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                </div>
+              }
+            >
+              <PdfReader fileUrl={readerUrl} />
+            </Suspense>
           )}
         </DialogContent>
       </Dialog>
