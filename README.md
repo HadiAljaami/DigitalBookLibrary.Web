@@ -45,7 +45,7 @@ with light/dark themes, talking to the [ASP.NET Core API](https://github.com/Had
 | Section | Screenshot |
 |:---:|:---:|
 | **Categories Dashboard** | ![Categories Dashboard](screenshots/categories_dashboard.png) |
-| **Book Dashboard** | ![Book Dashboard](screenshots/Book_dashboard.png) |
+| **Book Dashboard** | ![Book Dashboard](screenshots/book_dashboard.png) |
 | **Authors Dashboard** | ![Authors Dashboard](screenshots/Authors_dashboard.png) |
 | **Author Requests Dashboard** | ![Author Requests](screenshots/AuthorRequests_dashboard.png) |
 | **Publishers Dashboard** | ![Publishers Dashboard](screenshots/Publishers_dashboard.png) |
