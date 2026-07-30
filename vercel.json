@@ -3,5 +3,11 @@
   "rewrites": [
     { "source": "/api/:path*", "destination": "https://knowledge-oasis-api.runasp.net/api/:path*" },
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*).mjs",
+      "headers": [{ "key": "Content-Type", "value": "text/javascript; charset=utf-8" }]
+    }
   ]
 }
