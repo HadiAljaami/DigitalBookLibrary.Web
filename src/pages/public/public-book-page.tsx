@@ -26,11 +26,15 @@ const PdfReader = lazy(() =>
   import("@/components/public/pdf-reader").then((m) => ({ default: m.PdfReader })),
 );
 
-// Desktop browsers render PDFs inline in an iframe with their native viewer (best experience —
-// toolbar, zoom, smooth scroll). Mobile browsers can't, so there we fall back to the pdf.js reader.
+// Use the browser's native inline PDF viewer (iframe) only on a real desktop: a fine (mouse)
+// primary pointer AND a browser that reports inline-PDF support. Touch devices always use the
+// pdf.js reader — some mobile browsers falsely report pdfViewerEnabled=true but then show a blank
+// iframe, so the pointer check is what keeps phones/tablets on the reliable pdf.js path.
 const CAN_INLINE_PDF =
+  typeof window !== "undefined" &&
   typeof navigator !== "undefined" &&
-  (navigator as { pdfViewerEnabled?: boolean }).pdfViewerEnabled === true;
+  (navigator as { pdfViewerEnabled?: boolean }).pdfViewerEnabled === true &&
+  window.matchMedia("(pointer: fine)").matches;
 import { catalogService } from "@/services/catalog-service";
 import { memberService } from "@/services/member-service";
 import { useLanguages, useLocalName, findById } from "@/hooks/use-lookups";
